@@ -1,0 +1,42 @@
+﻿version: "3.8"
+
+services: 
+  
+  database:
+    container_name: database
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: StrongPassword123
+    ports:
+      - "1433:1433"  
+    volumes:
+      - database-volume:/var/opt/mssql:rw
+    networks:
+      - auth-sample-network
+
+  # app:
+  #   container_name: app
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   environment:        
+  #     - "ASPNETCORE_ENVIRONMENT=Development"
+  #     - "ConnectionStrings__SQLServer=Server=database,1433;Database=Reneee;User=SA;Password=StrongPassword123;trustServerCertificate=true;"
+  #   ports:
+  #     - "8080:80"
+  #   depends_on:
+  #     - database
+  #   networks:
+  #     - auth-sample-network
+  #   deploy:
+  #     restart_policy:
+  #       condition: on-failure
+  #       max_attempts: 3
+        
+networks:
+  auth-sample-network:
+    driver: bridge
+    
+volumes:
+  database-volume:

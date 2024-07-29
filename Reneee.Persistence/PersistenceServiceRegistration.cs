@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Reneee.Persistence.Extensions;
 using Reneee.Application.Contracts;
 using Reneee.Persistence.Repositories;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Reneee.Persistence
 {
@@ -33,6 +35,8 @@ namespace Reneee.Persistence
                     dbContextOptionBuilder.EnableSensitiveDataLogging(databaseOptions.EnableSensitiveDataLogging);
                 });
 
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAttributeRepository, AttributeRepository>();
             services.AddScoped<IAttributeValueRepository, AttributeValueRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -46,7 +50,9 @@ namespace Reneee.Persistence
             services.AddScoped<IPromotionRepository, PromotionRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 
             return services;
         }

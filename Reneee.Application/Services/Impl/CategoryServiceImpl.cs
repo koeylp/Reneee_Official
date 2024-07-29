@@ -14,6 +14,7 @@ namespace Reneee.Application.Services.Impl
         public async Task<CategoryDto> CreateCategory(CreateCategoryDto request)
         {
             var categoryEntity = _mapper.Map<Category>(request);
+
             await _categoryRepository.Add(categoryEntity);
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<CategoryDto>(categoryEntity);

@@ -24,6 +24,7 @@ namespace Reneee.Application.Profiles
         {
             CreateMap<Attribute, AttributeDto>().ReverseMap();
             CreateMap<AttributeValue, AttributeValueDto>().ReverseMap();
+            CreateMap<CreateCategoryDto, Category>();
             CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<Order, OrderDto>().ReverseMap();
             CreateMap<OrderDetails, OrderDetailsDto>().ReverseMap();

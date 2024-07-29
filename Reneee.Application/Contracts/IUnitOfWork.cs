@@ -2,19 +2,20 @@
 {
     public interface IUnitOfWork : IDisposable
     {
-        IAttributeRepository Attributes { get; }
-        IAttributeValueRepository AttributeValues { get; }
-        ICategoryRepository Categories { get; }
-        IOrderDetailsRepository OrderDetails { get; }
-        IOrderRepository Orders { get; }
-        IPaymentRepository Payments { get; }
-        IProductAttributeRepository ProductAttributes { get; }
-        IProductImageRepository ProductImages { get; }
-        IProductPromotionRepository ProductPromotions { get; }
-        IProductRepository Products { get; }
-        IPromotionRepository Promotions { get; }
-        ITransactionRepository Transactions { get; }
-        IUserRepository Users { get; }
-        Task<int> SaveChangesAsync();
+        IAttributeRepository AttributeRepository { get; }
+        IAttributeValueRepository AttributeValueRepository { get; }
+        ICategoryRepository CategoryRepository { get; }
+        IOrderDetailsRepository OrderDetailsRepository { get; }
+        IOrderRepository OrderRepository { get; }
+        IPaymentRepository PaymentRepository { get; }
+        IProductAttributeRepository ProductAttributeRepository { get; }
+        IProductImageRepository ProductImageRepository { get; }
+        IProductPromotionRepository ProductPromotionRepository { get; }
+        IProductRepository ProductRepository { get; }
+        IPromotionRepository PromotionRepository { get; }
+        ITransactionRepository TransactionRepository { get; }
+        IUserRepository UserRepository { get; }
+
+        Task SaveChangesAsync();
     }
 }

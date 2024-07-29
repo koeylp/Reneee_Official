@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Reneee.Application.Services.Impl;
+using Reneee.Application.Services;
 using System.Reflection;
 
 namespace Reneee.Application
@@ -8,6 +10,8 @@ namespace Reneee.Application
         public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services)
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+            services.AddScoped<CategoryService, CategoryServiceImpl>();
 
             return services;
         }

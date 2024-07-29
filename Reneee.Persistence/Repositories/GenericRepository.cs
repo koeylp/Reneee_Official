@@ -17,6 +17,7 @@ namespace Reneee.Persistence.Repositories
         public async Task Delete(T entity)
         {
             _dbContext.Set<T>().Remove(entity);
+            await Task.CompletedTask;
         }
 
         public async Task<bool> Exists(int id)

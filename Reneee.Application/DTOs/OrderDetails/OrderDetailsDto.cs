@@ -9,7 +9,7 @@ namespace Reneee.Application.DTOs.OrderDetails
         public decimal Price { get; set; }
         public int Quantity { get; set; }
         public int Status { get; set; }
-        public OrderDto Order { get; set; }
-        public ProductAttributeDto ProductAttribute { get; set; }
+        public OrderDto? Order { get; set; }
+        public ProductAttributeDto? ProductAttribute { get; set; }
     }
 }

@@ -1,41 +1,56 @@
-﻿using Reneee.Application.Contracts;
+﻿using Microsoft.AspNetCore.Http;
+using Reneee.Application.Contracts;
 
 namespace Reneee.Persistence.Repositories
 {
-    public class UnitOfWork(ApplicationDbContext context,
-                      IAttributeRepository attributeRepository,
-                      IAttributeValueRepository attributeValueRepository,
-                      ICategoryRepository categoryRepository,
-                      IOrderDetailsRepository orderDetailsRepository,
-                      IOrderRepository orderRepository,
-                      IPaymentRepository paymentRepository,
-                      IProductAttributeRepository productAttributeRepository,
-                      IProductImageRepository productImageRepository,
-                      IProductPromotionRepository productPromotionRepository,
-                      IProductRepository productRepository,
-                      IPromotionRepository promotionRepository,
-                      ITransactionRepository transactionRepository,
-                      IUserRepository userRepository) : IUnitOfWork
+    public class UnitOfWork(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor) : IUnitOfWork
     {
         private readonly ApplicationDbContext _context = context;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+        private IAttributeRepository? _attributeRepository;
+        private IAttributeValueRepository? _attributeValueRepository;
+        private ICategoryRepository? _categoryRepository;
+        private IOrderDetailsRepository? _orderDetailsRepository;
+        private IOrderRepository? _orderRepository;
+        private IPaymentRepository? _paymentRepository;
+        private IProductAttributeRepository? _productAttributeRepository;
+        private IProductImageRepository? _productImageRepository;
+        private IProductPromotionRepository? _productPromotionRepository;
+        private IProductRepository? _productRepository;
+        private IPromotionRepository? _promotionRepository;
+        private ITransactionRepository? _transactionRepository;
+        private IUserRepository? _userRepository;
 
-        public IAttributeRepository Attributes { get; } = attributeRepository;
-        public IAttributeValueRepository AttributeValues { get; } = attributeValueRepository;
-        public ICategoryRepository Categories { get; } = categoryRepository;
-        public IOrderDetailsRepository OrderDetails { get; } = orderDetailsRepository;
-        public IOrderRepository Orders { get; } = orderRepository;
-        public IPaymentRepository Payments { get; } = paymentRepository;
-        public IProductAttributeRepository ProductAttributes { get; } = productAttributeRepository;
-        public IProductImageRepository ProductImages { get; } = productImageRepository;
-        public IProductPromotionRepository ProductPromotions { get; } = productPromotionRepository;
-        public IProductRepository Products { get; } = productRepository;
-        public IPromotionRepository Promotions { get; } = promotionRepository;
-        public ITransactionRepository Transactions { get; } = transactionRepository;
-        public IUserRepository Users { get; } = userRepository;
+        public IAttributeRepository AttributeRepository =>
+            _attributeRepository ??= new AttributeRepository(_context);
+        public IAttributeValueRepository AttributeValueRepository =>
+            _attributeValueRepository ??= new AttributeValueRepository(_context);
+        public ICategoryRepository CategoryRepository =>
+            _categoryRepository ??= new CategoryRepository(_context);
+        public IOrderDetailsRepository OrderDetailsRepository =>
+            _orderDetailsRepository ??= new OrderDetailsRepository(_context);
+        public IOrderRepository OrderRepository =>
+            _orderRepository ??= new OrderRepository(_context);
+        public IPaymentRepository PaymentRepository =>
+            _paymentRepository ??= new PaymentRepository(_context);
+        public IProductAttributeRepository ProductAttributeRepository =>
+            _productAttributeRepository ??= new ProductAttributeRepository(_context);
+        public IProductImageRepository ProductImageRepository =>
+            _productImageRepository ??= new ProductImageRepository(_context);
+        public IProductPromotionRepository ProductPromotionRepository =>
+            _productPromotionRepository ??= new ProductPromotionRepository(_context);
+        public IProductRepository ProductRepository =>
+            _productRepository ??= new ProductRepository(_context);
+        public IPromotionRepository PromotionRepository =>
+            _promotionRepository ??= new PromotionRepository(_context);
+        public ITransactionRepository TransactionRepository =>
+            _transactionRepository ??= new TransactionRepository(_context);
+        public IUserRepository UserRepository =>
+            _userRepository ??= new UserRepository(_context);
 
-        public async Task<int> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public void Dispose()

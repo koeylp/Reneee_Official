@@ -1,10 +1,10 @@
 ﻿using Reneee.Application.Contracts;
-using System.Transactions;
+using Reneee.Domain.Entities;
+
 
 namespace Reneee.Persistence.Repositories
 {
     public class TransactionRepository(ApplicationDbContext dbContext) : GenericRepository<Transaction>(dbContext), ITransactionRepository
     {
-        private readonly ApplicationDbContext _dbContext = dbContext;
     }
 }

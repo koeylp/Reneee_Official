@@ -12,7 +12,7 @@ using Reneee.Persistence;
 namespace Reneee.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240728165207_Initial")]
+    [Migration("20240729022926_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

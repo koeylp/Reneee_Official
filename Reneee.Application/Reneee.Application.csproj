@@ -19,4 +19,8 @@
     <ProjectReference Include="..\Reneee.Domain\Reneee.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\V1\Queries\" />
+  </ItemGroup>
+
 </Project>

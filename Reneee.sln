@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reneee.API", "Reneee.API\Re
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{311C1FF5-8C32-494E-99F3-9280EED1331D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reneee.Infrastructure", "Reneee.Infrastructure\Reneee.Infrastructure.csproj", "{12B963C8-1D15-443A-A1AE-93E0C73A395E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{311C1FF5-8C32-494E-99F3-9280EED1331D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{311C1FF5-8C32-494E-99F3-9280EED1331D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{311C1FF5-8C32-494E-99F3-9280EED1331D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12B963C8-1D15-443A-A1AE-93E0C73A395E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12B963C8-1D15-443A-A1AE-93E0C73A395E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12B963C8-1D15-443A-A1AE-93E0C73A395E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12B963C8-1D15-443A-A1AE-93E0C73A395E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +65,7 @@ Global
 		{0197BBAE-D949-4075-B944-34FAF045C8F6} = {2D0E1EC3-214C-4967-AB45-6F8A422FA791}
 		{39D1CE0A-7145-4E58-AD07-EC5A55229F09} = {93F1D114-6FEA-4BC5-A1A0-D1396A6E0A25}
 		{F513710E-B3C5-4F35-81D9-1AB3CC620FE4} = {AC196DA5-7356-48A8-B7E2-1F8B2DFA1C51}
+		{12B963C8-1D15-443A-A1AE-93E0C73A395E} = {93F1D114-6FEA-4BC5-A1A0-D1396A6E0A25}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {98049BE7-1747-480D-BA34-AC09F3EFA628}

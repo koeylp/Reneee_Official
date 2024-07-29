@@ -3,10 +3,10 @@ using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Reneee.Persistence.Extensions;
-using Reneee.Application.Contracts;
 using Reneee.Persistence.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Reneee.Application.Contracts.Persistence;
 
 namespace Reneee.Persistence
 {

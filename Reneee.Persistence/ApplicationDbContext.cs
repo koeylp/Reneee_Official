@@ -31,6 +31,9 @@ namespace Reneee.Persistence
 
                 entity.Property(e => e.Role)
                       .HasConversion<string>();
+
+                entity.HasIndex(e => e.Email)
+                      .IsUnique();
             });
 
             modelBuilder.Entity<Order>(entity =>

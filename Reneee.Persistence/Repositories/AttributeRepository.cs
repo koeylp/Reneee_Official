@@ -1,4 +1,4 @@
-﻿using Reneee.Application.Contracts;
+﻿using Reneee.Application.Contracts.Persistence;
 using Attribute = Reneee.Domain.Entities.Attribute;
 
 namespace Reneee.Persistence.Repositories

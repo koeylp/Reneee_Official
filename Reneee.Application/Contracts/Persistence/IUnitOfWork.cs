@@ -1,4 +1,4 @@
-﻿namespace Reneee.Application.Contracts
+﻿namespace Reneee.Application.Contracts.Persistence
 {
     public interface IUnitOfWork : IDisposable
     {

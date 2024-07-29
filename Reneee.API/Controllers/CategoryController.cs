@@ -6,15 +6,9 @@ namespace Reneee.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController : ControllerBase
+    public class CategoryController(ICategoryService categoryService) : ControllerBase
     {
-        private readonly CategoryService _categoryService;
-
-        public CategoryController(CategoryService categoryService)
-        {
-            _categoryService = categoryService; 
-        }
-
+        private readonly ICategoryService _categoryService = categoryService;
 
         [HttpPost]
         public async Task<ActionResult<CategoryDto>> CreateCategory([FromBody] CreateCategoryDto categoryRequest)

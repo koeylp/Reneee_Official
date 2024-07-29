@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Reneee.Application.Contracts;
+using Reneee.Application.Contracts.Persistence;
 using Reneee.Application.DTOs.Category;
 using Reneee.Domain.Entities;
 

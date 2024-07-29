@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Reneee.Application.Contracts;
+using Reneee.Application.Contracts.Persistence;
 
 namespace Reneee.Persistence.Repositories
 {

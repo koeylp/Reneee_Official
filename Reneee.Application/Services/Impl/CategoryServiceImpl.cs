@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using Reneee.Application.Contracts;
+using Reneee.Application.Contracts.Persistence;
 using Reneee.Application.DTOs.Category;
 using Reneee.Domain.Entities;
 
 namespace Reneee.Application.Services.Impl
 {
-    public class CategoryServiceImpl(IUnitOfWork unitOfWork, IMapper mapper, ICategoryRepository categoryRepository) : CategoryService
+    public class CategoryServiceImpl(IUnitOfWork unitOfWork, IMapper mapper, ICategoryRepository categoryRepository) : ICategoryService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;

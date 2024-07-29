@@ -1,4 +1,6 @@
+using Reneee.API.Middleware;
 using Reneee.Application;
+using Reneee.Identity;
 using Reneee.Persistence;
 
 namespace Reneee.API
@@ -12,6 +14,7 @@ namespace Reneee.API
             builder.Services.ConfigurePersistenceServices(builder.Configuration);
 
             builder.Services.ConfigureApplicationServices();
+            builder.Services.ConfigureIdentityServices(builder.Configuration);
             // Add services to the container.
             builder.Services.AddControllers();
             builder.Services.AddCors(o =>
@@ -34,7 +37,7 @@ namespace Reneee.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

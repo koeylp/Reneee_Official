@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using FluentValidation.Results;
 
 namespace Reneee.Application.Exceptions
 {
-    public class ValidationException
+    public class ValidationException : ApplicationException
     {
-        public List<string> Errors { get; set; } = new List<string>();
+        public List<string> Errors { get; set; } = [];
 
         public ValidationException(ValidationResult validationResult)
         {
-            //foreach (var error in validationResult.Errors)
-            //{
-            //    Errors.Add(error.ErrorMessage);
-            //}
+            foreach (var error in validationResult.Errors)
+            {
+                Errors.Add(error.ErrorMessage);
+            }
         }
     }
 }

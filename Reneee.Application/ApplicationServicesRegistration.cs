@@ -2,6 +2,7 @@
 using Reneee.Application.Services.Impl;
 using Reneee.Application.Services;
 using System.Reflection;
+using Reneee.Application.Contracts.Identity;
 
 namespace Reneee.Application
 {
@@ -11,7 +12,15 @@ namespace Reneee.Application
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-            services.AddScoped<CategoryService, CategoryServiceImpl>();
+            services.AddScoped<IAttributeService, AttributeServiceImpl>();
+            services.AddScoped<ICategoryService, CategoryServiceImpl>();
+            services.AddScoped<IOrderService, OrderServiceImpl>();
+            services.AddScoped<IPaymentService, PaymentServiceImpl>();  
+            services.AddScoped<IProductService, ProductServiceImpl>();
+            services.AddScoped<IPromotionService, PromotionServiceImpl>();
+            services.AddScoped<ITransactionService, TransactionServiceImpl>();
+            services.AddScoped<IUserService, UserServiceImpl>();
+            
 
             return services;
         }

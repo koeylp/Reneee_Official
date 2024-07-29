@@ -2,7 +2,7 @@
 
 namespace Reneee.Application.Services
 {
-    public interface CategoryService
+    public interface ICategoryService
     {
         Task<CategoryDto> CreateCategory(CreateCategoryDto categoryRequest);
     }

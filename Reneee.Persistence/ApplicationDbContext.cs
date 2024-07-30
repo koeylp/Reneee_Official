@@ -55,6 +55,7 @@ namespace Reneee.Persistence
 
                 entity.Property(e => e.OriginalPrice)
                     .HasPrecision(18, 2);
+
             });
 
             modelBuilder.Entity<Transaction>(entity =>

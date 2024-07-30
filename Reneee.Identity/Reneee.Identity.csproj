@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Reneee.Persistence\Reneee.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
 </Project>

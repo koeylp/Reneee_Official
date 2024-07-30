@@ -16,5 +16,11 @@ namespace Reneee.API.Controllers
         {
             return Ok(await _authService.Register(registerRequest));
         }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<AuthResponse>> Login([FromBody] AuthRequest authRequest)
+        {
+            return Ok(await _authService.Login(authRequest));
+        }
     }
 }

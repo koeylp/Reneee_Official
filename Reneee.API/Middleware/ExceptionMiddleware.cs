@@ -41,6 +41,9 @@ namespace Reneee.API.Middleware
                 case NotFoundException:
                     statusCode = HttpStatusCode.NotFound;
                     break;
+                case UnauthorizedException:
+                    statusCode = HttpStatusCode.Unauthorized;
+                    break;
                 default:
                     break;
             }

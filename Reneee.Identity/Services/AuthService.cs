@@ -2,17 +2,33 @@
 using Reneee.Application.Contracts.Identity;
 using Reneee.Application.Contracts.Persistence;
 using Reneee.Application.DTOs.User;
+using Reneee.Application.Exceptions;
 using Reneee.Application.Models.Identity;
 using Reneee.Application.Utils;
 using Reneee.Domain.Entities;
 
 namespace Reneee.Identity.Services
 {
-    public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IUserRepository userRepository) : IAuthService
+    public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IUserRepository userRepository, IJwtTokenService jwtTokenService) : IAuthService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
         private readonly IUserRepository _userRepository = userRepository;
+        private readonly IJwtTokenService _jwtTokenService = jwtTokenService;
+
+        public async Task<AuthResponse> Login(AuthRequest authRequest)
+        {
+            var foundUser = await _userRepository.GetByEmail(authRequest.Email);
+            if (foundUser == null || !PasswordUtils.Verify(authRequest.Password, foundUser.Password))
+            {
+                throw new BadRequestException("Invalid email or password.");
+            }
+            string AccessToken = _jwtTokenService.GenerateAccessToken(_mapper.Map<UserDto>(foundUser));
+            string RefreshToken = _jwtTokenService.GenerateRefreshToken();
+            await _unitOfWork.SaveChangesAsync();
+            return new AuthResponse(AccessToken, RefreshToken);
+        }
+
         public async Task<UserDto> Register(RegisterRequest registerRequest)
         {
             if (!DateOnly.TryParse(registerRequest.Dob, out var dob))

@@ -25,5 +25,6 @@ namespace Reneee.Domain.Entities
         public int Status { get; set; }
         public virtual Category Category { get; set; }
         public virtual ICollection<ProductImage> ProductImages { get; set; }
+        public virtual ICollection<ProductAttribute> ProductAttributes { get; set; }
     }
 }

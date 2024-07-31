@@ -18,6 +18,9 @@ namespace Reneee.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -196,6 +199,9 @@ namespace Reneee.Persistence.Migrations
 
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("ntext");
@@ -492,7 +498,7 @@ namespace Reneee.Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("Reneee.Domain.Entities.Product", "Product")
-                        .WithMany()
+                        .WithMany("ProductAttributes")
                         .HasForeignKey("ProductID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -558,6 +564,8 @@ namespace Reneee.Persistence.Migrations
 
             modelBuilder.Entity("Reneee.Domain.Entities.Product", b =>
                 {
+                    b.Navigation("ProductAttributes");
+
                     b.Navigation("ProductImages");
                 });
 #pragma warning restore 612, 618

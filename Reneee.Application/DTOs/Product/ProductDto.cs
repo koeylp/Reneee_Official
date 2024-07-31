@@ -1,4 +1,5 @@
 ﻿using Reneee.Application.DTOs.Category;
+using Reneee.Application.DTOs.ProductAttribute;
 using Reneee.Application.DTOs.ProductImage;
 
 namespace Reneee.Application.DTOs.Product
@@ -15,7 +16,9 @@ namespace Reneee.Application.DTOs.Product
         public string? Guideline { get; set; }
         public string? AdditionalInfo { get; set; }
         public int Status { get; set; }
-        public CategoryDto Category { get; set; }
-        public ICollection<ProductImageDto> ProductImages { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public CategoryDto? Category { get; set; }
+        public ICollection<ProductImageDto>? ProductImages { get; set; }
+        public ICollection<ProductAttributeDto>? ProductAttributes { get; set; }
     }
 }

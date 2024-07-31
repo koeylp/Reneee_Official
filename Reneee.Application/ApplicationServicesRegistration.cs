@@ -19,6 +19,7 @@ namespace Reneee.Application
             services.AddScoped<IPromotionService, PromotionServiceImpl>();
             services.AddScoped<ITransactionService, TransactionServiceImpl>();
             services.AddScoped<IUserService, UserServiceImpl>();
+            services.AddScoped<IAttributeValueService, AttributeValueServiceImpl>();
             
 
             return services;

@@ -7,10 +7,10 @@ namespace Reneee.Domain.Entities
     {
         public int Id { get; set; }
         [Required]
-        public string Name { get; set; }
+        public string? Name { get; set; }
         [Column(TypeName = "ntext")]
         [Required]
-        public string Thumbnail { get; set; }
+        public string? Thumbnail { get; set; }
         public int? CategoryId { get; set; }
         public decimal OriginalPrice { get; set; }
         public decimal DiscountPrice { get; set; }
@@ -23,8 +23,9 @@ namespace Reneee.Domain.Entities
         [Column(TypeName = "ntext")]
         public string? AdditionalInfo { get; set; }
         public int Status { get; set; }
+        public DateTime? CreatedAt { get; set; } 
         public virtual Category Category { get; set; }
         public virtual ICollection<ProductImage> ProductImages { get; set; }
-        public virtual ICollection<ProductAttribute> ProductAttributes { get; set; }
+        public virtual ICollection<ProductAttribute>? ProductAttributes { get; set; }
     }
 }

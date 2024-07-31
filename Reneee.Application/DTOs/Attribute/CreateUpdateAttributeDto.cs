@@ -5,6 +5,6 @@ namespace Reneee.Application.DTOs.Attribute
     public class CreateUpdateAttributeDto
     {
         [Required]
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 }

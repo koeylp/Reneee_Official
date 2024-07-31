@@ -14,12 +14,8 @@ namespace Reneee.Application.Services.Impl
 
         public async Task<CategoryDto> EnableCategory(int id)
         {
-            Category foundCategory = await _categoryRepository.Get(id);
-            if (foundCategory == null)
-            {
-                throw new NotFoundException("Category not found with id " + id);
-            }
-            if (foundCategory.Status == 1) throw new BadRequestException("Category was activated!");
+            Category foundCategory = await _categoryRepository.Get(id) ?? throw new NotFoundException("Category not found with id " + id);
+            if (foundCategory.Status == 1) throw new BadRequestException("Category was enabled!");
             Category updatedCategory = await _categoryRepository.UpdateCategoryStatus(foundCategory, 1);
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<CategoryDto>(updatedCategory);
@@ -44,6 +40,15 @@ namespace Reneee.Application.Services.Impl
         {
             IReadOnlyList<Category> categories = await _unitOfWork.CategoryRepository.GetAll();
             return _mapper.Map<IReadOnlyList<CategoryDto>>(categories);
+        }
+
+        public async Task<string> DeleteCategory(int id)
+        {
+            var categoryEntity = await _categoryRepository.Get(id) ?? throw new NotFoundException("Category not found");
+            if (categoryEntity.Status == 1) throw new BadRequestException($"Cannot delete category with id - {id} which is enabled");
+            await _categoryRepository.Delete(categoryEntity);
+            await _unitOfWork.SaveChangesAsync();
+            return "Done deleting";
         }
     }
 }

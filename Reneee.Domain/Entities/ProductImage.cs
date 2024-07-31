@@ -11,6 +11,6 @@ namespace Reneee.Domain.Entities
         public string Url { get; set; }
         public int ProductId { get; set; }
         public int Status { get; set; }
-        public Product Product { get; set; }
+        public virtual Product Product { get; set; }
     }
 }

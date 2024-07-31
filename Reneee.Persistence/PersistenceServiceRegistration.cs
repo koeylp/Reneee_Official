@@ -30,7 +30,7 @@ namespace Reneee.Persistence
                         sqlServerAction.MigrationsAssembly("Reneee.Persistence");
                         sqlServerAction.EnableRetryOnFailure(databaseOptions.MaxRetryCount);
                         sqlServerAction.CommandTimeout(databaseOptions.CommandTimeout);
-                    });
+                    }).UseLazyLoadingProxies();
                     dbContextOptionBuilder.EnableDetailedErrors(databaseOptions.EnableDetailedErrors);
                     dbContextOptionBuilder.EnableSensitiveDataLogging(databaseOptions.EnableSensitiveDataLogging);
                 });

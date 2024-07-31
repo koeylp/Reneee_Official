@@ -1,4 +1,6 @@
-﻿namespace Reneee.Application.DTOs.Product
+﻿using Reneee.Application.DTOs.ProductAttribute;
+
+namespace Reneee.Application.DTOs.Product
 {
     public class CreateProductDto
     {
@@ -10,7 +12,8 @@
         public string? Guideline { get; set; }
         public string? AdditionalInfo { get; set; }
         public int CategoryId { get; set; }
-        public string?[] ProductImages { get; set; }
+        public string[]? ProductImages { get; set; }
+        public CreateProductAttributeDto[]? ProductAttributeValues { get; set; }
         
     }
 }

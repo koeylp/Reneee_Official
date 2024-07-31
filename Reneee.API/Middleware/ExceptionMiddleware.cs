@@ -19,7 +19,7 @@ namespace Reneee.API.Middleware
                 await HandleExceptionAsync(httpContext, ex);
             }
         }
-        private Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
             HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
@@ -43,6 +43,14 @@ namespace Reneee.API.Middleware
                     break;
                 case UnauthorizedException:
                     statusCode = HttpStatusCode.Unauthorized;
+                    break;
+                case ForbiddenException forbiddenException:
+                    statusCode = HttpStatusCode.Forbidden;
+                    result = JsonConvert.SerializeObject(new ErrorDetails
+                    {
+                        ErrorType = "Forbidden",
+                        ErrorMessage = forbiddenException.Message
+                    });
                     break;
                 default:
                     break;

@@ -8,5 +8,6 @@ namespace Reneee.Application.Services
         Task<CategoryDto> CreateCategory(CreateCategoryDto categoryRequest);
         Task<IReadOnlyList<CategoryDto>> GetAllActiveCategories();
         Task<IReadOnlyList<CategoryDto>> GetAllCategories();
+        Task<string> DeleteCategory(int id);
     }
 }

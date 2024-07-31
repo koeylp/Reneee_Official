@@ -12,7 +12,7 @@ namespace Reneee.Application.DTOs.Product
         public decimal DiscountPrice { get; set; }
         public string? Description { get; set; }
         public string? Ingredients { get; set; }
-        public string? guideline { get; set; }
+        public string? Guideline { get; set; }
         public string? AdditionalInfo { get; set; }
         public int Status { get; set; }
         public CategoryDto Category { get; set; }

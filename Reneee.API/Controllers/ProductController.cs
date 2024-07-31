@@ -9,6 +9,7 @@ namespace Reneee.API.Controllers
     public class ProductController(IProductService productService)
     {
         private readonly IProductService _productService = productService;
+
         [HttpPost]
         public async Task<ActionResult<ProductDto>> CreateProduct([FromBody] CreateProductDto productRequest)
         {

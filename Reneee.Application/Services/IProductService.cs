@@ -1,5 +1,4 @@
 ﻿using Reneee.Application.DTOs.Product;
-using Reneee.Domain.Entities;
 
 namespace Reneee.Application.Services
 {

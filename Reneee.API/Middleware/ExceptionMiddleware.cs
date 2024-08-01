@@ -1,12 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Reneee.Application.Exceptions;
 using System.Net;
 
 namespace Reneee.API.Middleware
 {
-    public class ExceptionMiddleware(RequestDelegate next)
+    public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
         private readonly RequestDelegate _next = next;
+        private readonly ILogger<ExceptionMiddleware> _logger = logger;
 
         public async Task InvokeAsync(HttpContext httpContext)
         {
@@ -16,6 +18,7 @@ namespace Reneee.API.Middleware
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, message: ex.Message);
                 await HandleExceptionAsync(httpContext, ex);
             }
         }
@@ -51,6 +54,9 @@ namespace Reneee.API.Middleware
                         ErrorType = "Forbidden",
                         ErrorMessage = forbiddenException.Message
                     });
+                    break;
+                case SecurityTokenExpiredException:
+                    statusCode = HttpStatusCode.Unauthorized;
                     break;
                 default:
                     break;

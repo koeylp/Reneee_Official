@@ -1,5 +1,4 @@
 ﻿using Reneee.Application.DTOs.ProductAttribute;
-using Reneee.Application.DTOs.Promotion;
 
 namespace Reneee.Application.DTOs.ProductPromotion
 {
@@ -8,6 +7,6 @@ namespace Reneee.Application.DTOs.ProductPromotion
         public int Id { get; set; }
         public int Status { get; set; }
         public ProductAttributeDto? productAttribute { get; set; }
-        public PromotionDto? Promotion { get; set; }
+        //public PromotionDto? Promotion { get; set; }
     }
 }

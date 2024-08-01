@@ -32,8 +32,16 @@ namespace Reneee.Application.Profiles
             CreateMap<Product, ProductDto>().ReverseMap();
             CreateMap<ProductAttribute, ProductAttributeDto>().ReverseMap();
             CreateMap<ProductImage, ProductImageDto>().ReverseMap();
-            CreateMap<ProductPromotion, ProductPromotionDto>().ReverseMap();
             CreateMap<Promotion, PromotionDto>().ReverseMap();
+            CreateMap<ProductPromotion, ProductPromotionDto>().ReverseMap();
+            //CreateMap<ProductPromotion, PromotionDto>()
+            //.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Promotion.Id))
+            //.ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Promotion.Description))
+            //.ForMember(dest => dest.DiscountType, opt => opt.MapFrom(src => src.Promotion.DiscountType.ToString()))
+            //.ForMember(dest => dest.DiscountValue, opt => opt.MapFrom(src => src.Promotion.DiscountValue))
+            //.ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.Promotion.StartDate.ToString()))
+            //.ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.Promotion.EndDate.ToString()));
+
             CreateMap<Transaction, TransactionDto>().ReverseMap();
             CreateMap<User, UserDto>().ReverseMap();
         }

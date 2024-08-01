@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Storage;
 using Reneee.Application.Contracts.Persistence;
 
 namespace Reneee.Persistence.Repositories
@@ -20,6 +21,8 @@ namespace Reneee.Persistence.Repositories
         private IPromotionRepository? _promotionRepository;
         private ITransactionRepository? _transactionRepository;
         private IUserRepository? _userRepository;
+        private IDbContextTransaction _currentTransaction;
+
 
         public IAttributeRepository AttributeRepository =>
             _attributeRepository ??= new AttributeRepository(_context);
@@ -48,15 +51,32 @@ namespace Reneee.Persistence.Repositories
         public IUserRepository UserRepository =>
             _userRepository ??= new UserRepository(_context);
 
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _context.Database.BeginTransactionAsync();
+        }
+
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
+            if (_currentTransaction != null)
+            {
+                await _currentTransaction.CommitAsync();
+                await _currentTransaction.DisposeAsync();
+                _currentTransaction = null;
+            }
         }
 
         public void Dispose()
         {
             _context.Dispose();
             GC.SuppressFinalize(this);
+        }
+
+        public IExecutionStrategy CreateExecutionStrategy()
+        {
+            return _context.Database.CreateExecutionStrategy();
         }
     }
 }

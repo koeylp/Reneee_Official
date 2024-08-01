@@ -256,6 +256,9 @@ namespace Reneee.Persistence.Migrations
                     b.Property<int>("ProductID")
                         .HasColumnType("int");
 
+                    b.Property<int?>("PromotionId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -267,6 +270,8 @@ namespace Reneee.Persistence.Migrations
                     b.HasIndex("AttributeValueID");
 
                     b.HasIndex("ProductID");
+
+                    b.HasIndex("PromotionId");
 
                     b.ToTable("ProductAttributes");
                 });
@@ -503,6 +508,10 @@ namespace Reneee.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Reneee.Domain.Entities.Promotion", null)
+                        .WithMany("ProductAttributes")
+                        .HasForeignKey("PromotionId");
+
                     b.Navigation("AttributeValue");
 
                     b.Navigation("Product");
@@ -567,6 +576,11 @@ namespace Reneee.Persistence.Migrations
                     b.Navigation("ProductAttributes");
 
                     b.Navigation("ProductImages");
+                });
+
+            modelBuilder.Entity("Reneee.Domain.Entities.Promotion", b =>
+                {
+                    b.Navigation("ProductAttributes");
                 });
 #pragma warning restore 612, 618
         }

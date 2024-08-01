@@ -11,13 +11,18 @@ namespace Reneee.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.AddDebug();
+            builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
+
             builder.Services.ConfigurePersistenceServices(builder.Configuration);
 
             builder.Services.ConfigureApplicationServices();
             builder.Services.ConfigureIdentityServices(builder.Configuration);
             // Add services to the container.
             builder.Services.AddControllers();
+            
             builder.Services.AddCors(o =>
             {
                 o.AddPolicy("CorsPolicy",

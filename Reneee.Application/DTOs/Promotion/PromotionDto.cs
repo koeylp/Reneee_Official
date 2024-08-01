@@ -1,4 +1,6 @@
-﻿namespace Reneee.Application.DTOs.Promotion
+﻿using Reneee.Application.DTOs.ProductPromotion;
+
+namespace Reneee.Application.DTOs.Promotion
 {
     public class PromotionDto
     {
@@ -6,8 +8,9 @@
         public string? Description { get; set; }
         public string DiscountType { get; set; }
         public decimal DiscountValue { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
         public int Status { get; set; }
+        public ICollection<ProductPromotionDto>? ProductPromotions { get; set; }
     }
 }

@@ -16,6 +16,12 @@ namespace Reneee.Persistence.Repositories
                 .ToListAsync();
         }
 
+        public async Task<Category> GetCategoryByIdAndStatus(int id, int status)
+        {
+            return await _dbContext.Categories
+                   .FirstOrDefaultAsync(c => c.Id == id && c.Status == status);
+        }
+
         public async Task<Category> UpdateCategoryStatus(Category category, int newStatus)
         {
             category.Status = newStatus;

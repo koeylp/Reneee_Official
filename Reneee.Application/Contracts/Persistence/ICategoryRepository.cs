@@ -6,5 +6,6 @@ namespace Reneee.Application.Contracts.Persistence
     {
         Task<IReadOnlyList<Category>> GetActiveCategories();
         Task<Category> UpdateCategoryStatus(Category category, int newStatus);
+        Task<Category> GetCategoryByIdAndStatus(int id, int status);
     }
 }

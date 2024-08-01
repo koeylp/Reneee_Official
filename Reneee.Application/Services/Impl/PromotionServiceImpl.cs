@@ -1,6 +1,88 @@
-﻿namespace Reneee.Application.Services.Impl
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Reneee.Application.Contracts.Persistence;
+using Reneee.Application.DTOs.Promotion;
+using Reneee.Application.Exceptions;
+using Reneee.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace Reneee.Application.Services.Impl
 {
-    public class PromotionServiceImpl : IPromotionService
+    public class PromotionServiceImpl(IPromotionRepository promotionRepository,
+                                      IProductPromotionRepository productPromotionRepository,
+                                      IProductAttributeRepository productAttributeRepository,
+                                      IUnitOfWork unitOfWork,
+                                      ILogger<PromotionServiceImpl> logger,
+                                      IMapper mapper) : IPromotionService
     {
+        private readonly IPromotionRepository _promotionRepository = promotionRepository;
+        private readonly IProductAttributeRepository _productAttributeRepository = productAttributeRepository;
+        private readonly IProductPromotionRepository _productPromotionRepository = productPromotionRepository;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly ILogger<PromotionServiceImpl> _logger = logger;
+        private readonly IMapper _mapper = mapper;
+
+        public async Task<PromotionDto> CreatePromotion(CreatePromotionDto promotionRequest)
+        {
+            _logger.LogInformation("Entering method CreatePromotion with body CreatePromotionDto");
+
+            var strategy = _unitOfWork.CreateExecutionStrategy();
+
+            return await strategy.ExecuteAsync(async () =>
+            {
+                using var transaction = await _unitOfWork.BeginTransactionAsync();
+                try
+                {
+                    var promotionEntity = new Promotion
+                    {
+                        Description = promotionRequest.Description,
+                        DiscountType = Enum.Parse<DiscountType>(promotionRequest.DiscountType),
+                        DiscountValue = promotionRequest.DiscountValue,
+                        StartDate = DateTime.Parse(promotionRequest.StartDate),
+                        EndDate = DateTime.Parse(promotionRequest.EndDate),
+                    };
+
+                    Promotion savedPromotion = await _promotionRepository.Add(promotionEntity);
+
+                    if (promotionRequest.ProductAttributeIds != null)
+                    {
+                        foreach (var item in promotionRequest.ProductAttributeIds)
+                        {
+                            var existProductPromotion = await _productPromotionRepository.GetByProductAttributeIdAndStatus(item, 1);
+                            if (existProductPromotion != null)
+                            {
+                                throw new BadRequestException($"ProductAttribute with id {item} is in another promotion.");
+                            }
+
+                            var foundProductAttribute = await _productAttributeRepository.Get(item) ?? throw new NotFoundException("Product Attribute not found with id " + item);
+                            var productPromotionEntity = new ProductPromotion
+                            {
+                                ProductAttribute = foundProductAttribute,
+                                Promotion = savedPromotion,
+                                Status = 1
+                            };
+                            await _productPromotionRepository.Add(productPromotionEntity);
+                        }
+                    }
+
+                    await _unitOfWork.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    return _mapper.Map<PromotionDto>(savedPromotion);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error occurred while creating promotion");
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
+        }
+
+        public async Task<IReadOnlyList<PromotionDto>> GetAllPromotions()
+        {
+            _logger.LogInformation("Fetching all Promotions");
+            return _mapper.Map<IReadOnlyList<PromotionDto>>(await _productPromotionRepository.GetAll());
+        }
     }
 }

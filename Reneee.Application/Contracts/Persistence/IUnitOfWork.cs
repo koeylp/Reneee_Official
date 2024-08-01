@@ -1,4 +1,6 @@
-﻿namespace Reneee.Application.Contracts.Persistence
+﻿using Microsoft.EntityFrameworkCore.Storage;
+
+namespace Reneee.Application.Contracts.Persistence
 {
     public interface IUnitOfWork : IDisposable
     {
@@ -15,7 +17,8 @@
         IPromotionRepository PromotionRepository { get; }
         ITransactionRepository TransactionRepository { get; }
         IUserRepository UserRepository { get; }
-
+        IExecutionStrategy CreateExecutionStrategy();
+        Task<IDbContextTransaction> BeginTransactionAsync();
         Task SaveChangesAsync();
     }
 }

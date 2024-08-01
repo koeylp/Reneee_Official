@@ -9,6 +9,9 @@ namespace Reneee.Domain.Entities
         [Required]
         public string Name { get; set; }
         [Column(TypeName = "ntext")]
+        public string Thumbnail { get; set; }
+
+        [Column(TypeName = "ntext")]
         public string? Description { get; set; }
         public int Status { get; set; }
     }

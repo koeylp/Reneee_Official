@@ -14,7 +14,7 @@ namespace Reneee.API.Controllers
         private readonly ICategoryService _categoryService = categoryService;
 
         [HttpPost]
-        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
+        //[Authorize(Roles = RoleConstants.ROLE_STAFF)]
         [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<CategoryDto>> CreateCategory([FromBody] CreateCategoryDto categoryRequest)
@@ -52,6 +52,12 @@ namespace Reneee.API.Controllers
         public async Task<ActionResult<string>> DeleteCategory([FromRoute] int id)
         {
             return Ok(await _categoryService.DeleteCategory(id));
+        }
+
+        [HttpPut("disable/{id}")]
+        public async Task<ActionResult<CategoryDto>> DisableCategory([FromRoute] int id)
+        {
+            return Ok(await _categoryService.DisableCategory(id));
         }
     }
 }

@@ -14,5 +14,6 @@ namespace Reneee.Domain.Entities
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int Status { get; set; }
+        public virtual ICollection<ProductPromotion>? ProductPromotions { get; set; }
     }
 }

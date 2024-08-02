@@ -10,6 +10,6 @@ namespace Reneee.Application.DTOs.OrderDetails
         public int Quantity { get; set; }
         public int Status { get; set; }
         public OrderDto? Order { get; set; }
-        public ProductAttributeDto? ProductAttribute { get; set; }
+        public ProductAttributeInfoDto? ProductAttributeInfo { get; set; }
     }
 }

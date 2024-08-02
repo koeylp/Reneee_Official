@@ -42,10 +42,12 @@ namespace Reneee.Application.Services.Impl
                         EndDate = DateTime.Parse(promotionRequest.EndDate),
                     };
 
-                    Promotion savedPromotion = await _promotionRepository.Add(promotionEntity);
+                    await _promotionRepository.Add(promotionEntity);
 
                     if (promotionRequest.ProductAttributeIds != null)
                     {
+                        var productPromotionEntities = new List<ProductPromotion>();
+
                         foreach (var item in promotionRequest.ProductAttributeIds)
                         {
                             var existProductPromotion = await _productPromotionRepository.GetByProductAttributeIdAndStatus(item, 1);
@@ -58,17 +60,19 @@ namespace Reneee.Application.Services.Impl
                             var productPromotionEntity = new ProductPromotion
                             {
                                 ProductAttribute = foundProductAttribute,
-                                Promotion = savedPromotion,
+                                Promotion = promotionEntity,
                                 Status = 1
                             };
-                            await _productPromotionRepository.Add(productPromotionEntity);
+                            productPromotionEntities.Add(productPromotionEntity);
                         }
+
+                        await _productPromotionRepository.AddRange(productPromotionEntities);
                     }
 
                     await _unitOfWork.SaveChangesAsync();
                     await transaction.CommitAsync();
 
-                    return _mapper.Map<PromotionDto>(savedPromotion);
+                    return _mapper.Map<PromotionDto>(promotionEntity);
                 }
                 catch (Exception ex)
                 {
@@ -82,7 +86,7 @@ namespace Reneee.Application.Services.Impl
         public async Task<IReadOnlyList<PromotionDto>> GetAllPromotions()
         {
             _logger.LogInformation("Fetching all Promotions");
-            return _mapper.Map<IReadOnlyList<PromotionDto>>(await _productPromotionRepository.GetAll());
+            return _mapper.Map<IReadOnlyList<PromotionDto>>(await _promotionRepository.GetAll());
         }
     }
 }

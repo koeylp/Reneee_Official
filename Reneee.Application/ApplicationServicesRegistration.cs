@@ -2,6 +2,7 @@
 using Reneee.Application.Services.Impl;
 using Reneee.Application.Services;
 using System.Reflection;
+using Reneee.Application.Services.CronJobs;
 
 namespace Reneee.Application
 {
@@ -20,7 +21,7 @@ namespace Reneee.Application
             services.AddScoped<ITransactionService, TransactionServiceImpl>();
             services.AddScoped<IUserService, UserServiceImpl>();
             services.AddScoped<IAttributeValueService, AttributeValueServiceImpl>();
-            
+            services.AddHostedService<PromotionPriceUpdaterService>();
 
             return services;
         }

@@ -6,7 +6,6 @@ namespace Reneee.Application.DTOs.ProductPromotion
     {
         public int Id { get; set; }
         public int Status { get; set; }
-        public ProductAttributeDto? productAttribute { get; set; }
-        //public PromotionDto? Promotion { get; set; }
+        public ProductAttributeDto? ProductAttribute { get; set; }
     }
 }

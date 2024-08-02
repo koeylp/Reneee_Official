@@ -88,6 +88,10 @@ namespace Reneee.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<string>("Thumbnail")
+                        .IsRequired()
+                        .HasColumnType("ntext");
+
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
@@ -231,6 +235,9 @@ namespace Reneee.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("ntext");
 
+                    b.Property<int>("TotalQuantity")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
@@ -256,9 +263,6 @@ namespace Reneee.Persistence.Migrations
                     b.Property<int>("ProductID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PromotionId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -270,8 +274,6 @@ namespace Reneee.Persistence.Migrations
                     b.HasIndex("AttributeValueID");
 
                     b.HasIndex("ProductID");
-
-                    b.HasIndex("PromotionId");
 
                     b.ToTable("ProductAttributes");
                 });
@@ -508,10 +510,6 @@ namespace Reneee.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Reneee.Domain.Entities.Promotion", null)
-                        .WithMany("ProductAttributes")
-                        .HasForeignKey("PromotionId");
-
                     b.Navigation("AttributeValue");
 
                     b.Navigation("Product");
@@ -537,7 +535,7 @@ namespace Reneee.Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("Reneee.Domain.Entities.Promotion", "Promotion")
-                        .WithMany()
+                        .WithMany("ProductPromotions")
                         .HasForeignKey("PromotionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -580,7 +578,7 @@ namespace Reneee.Persistence.Migrations
 
             modelBuilder.Entity("Reneee.Domain.Entities.Promotion", b =>
                 {
-                    b.Navigation("ProductAttributes");
+                    b.Navigation("ProductPromotions");
                 });
 #pragma warning restore 612, 618
         }

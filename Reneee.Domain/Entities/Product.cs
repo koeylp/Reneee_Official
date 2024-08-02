@@ -12,6 +12,7 @@ namespace Reneee.Domain.Entities
         [Required]
         public string? Thumbnail { get; set; }
         public int? CategoryId { get; set; }
+        public int TotalQuantity { get; set; }
         public decimal OriginalPrice { get; set; }
         public decimal DiscountPrice { get; set; }
         [Column(TypeName = "ntext")]

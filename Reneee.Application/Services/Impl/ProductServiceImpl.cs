@@ -14,6 +14,7 @@ namespace Reneee.Application.Services.Impl
                                     ICategoryRepository categoryRepository,
                                     IAttributeValueRepository attributeValueRepository,
                                     IProductAttributeRepository productAttributeRepository,
+                                    IProductPromotionRepository productPromotionRepository,
                                     ILogger<ProductServiceImpl> logger,
                                     IMapper mapper) : IProductService
     {
@@ -23,6 +24,7 @@ namespace Reneee.Application.Services.Impl
         private readonly ICategoryRepository _categoryRepository = categoryRepository;
         private readonly IAttributeValueRepository _attributeValueRepository = attributeValueRepository;
         private readonly IProductAttributeRepository _productAttributeRepository = productAttributeRepository;
+        private readonly IProductPromotionRepository _productPromotionRepository = productPromotionRepository;
         private readonly ILogger<ProductServiceImpl> _logger = logger;
         private readonly IMapper _mapper = mapper;
 
@@ -68,7 +70,7 @@ namespace Reneee.Application.Services.Impl
                             await _productImageRepository.Add(image);
                         }
                     }
-
+                    int totalQuantity = 0;
                     if (productRequest.ProductAttributeValues != null)
                     {
                         foreach (var item in productRequest.ProductAttributeValues)
@@ -85,8 +87,11 @@ namespace Reneee.Application.Services.Impl
                                 Status = 0
                             };
                             await _productAttributeRepository.Add(productAttributeEntity);
+                            totalQuantity += item.stock;
                         }
                     }
+                    savedProduct.TotalQuantity = totalQuantity;
+                    await _productRepository.Update(savedProduct);
                     await _unitOfWork.SaveChangesAsync();
                     await transaction.CommitAsync();
                     _logger.LogInformation("Product created with ID {ProductId}", savedProduct.Id);
@@ -155,6 +160,12 @@ namespace Reneee.Application.Services.Impl
         {
             _logger.LogInformation("Fetching all products");
             return _mapper.Map<IReadOnlyList<ProductDto>>(await _productRepository.GetAll());
+        }
+
+        public async Task<IReadOnlyList<ProductDto>> GetByPromotionId(int id)
+        {
+            var productList = await _productPromotionRepository.GetProductByPromotionId(id);
+            return _mapper.Map<IReadOnlyList<ProductDto>>(productList);
         }
 
         public async Task<ProductDto> GetProductById(int id)

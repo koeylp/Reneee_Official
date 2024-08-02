@@ -20,9 +20,11 @@ namespace Reneee.API
 
             builder.Services.ConfigureApplicationServices();
             builder.Services.ConfigureIdentityServices(builder.Configuration);
+            builder.Services.AddHttpContextAccessor();
+
             // Add services to the container.
             builder.Services.AddControllers();
-            
+
             builder.Services.AddCors(o =>
             {
                 o.AddPolicy("CorsPolicy",

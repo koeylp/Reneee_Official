@@ -57,5 +57,11 @@ namespace Reneee.API.Controllers
         {
             return Ok(await _productService.FilterProduct(filter_v_price_gte, filter_v_price_lte, sort_by, filter_v_availability));
         }
+
+        [HttpGet("promotion/{id}")]
+        public async Task<ActionResult<IReadOnlyList<ProductDto>>> GetByPromotionId([FromRoute] int id)
+        {
+            return Ok(await _productService.GetByPromotionId(id));
+        }
     }
 }

@@ -10,6 +10,7 @@ namespace Reneee.Application.Services
         Task<ProductDto> EnableProduct(int id);
         Task<IReadOnlyList<ProductDto>> FilterProduct(decimal? filter_v_price_gte, decimal? filter_v_price_lte, string? sort_by, int? filter_v_availability);
         Task<IReadOnlyList<ProductDto>> GetAllProducts();
+        Task<IReadOnlyList<ProductDto>> GetByPromotionId(int id);
         Task<ProductDto> GetProductById(int id);
     }
 }

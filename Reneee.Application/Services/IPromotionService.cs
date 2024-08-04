@@ -6,5 +6,6 @@ namespace Reneee.Application.Services
     {
         Task<PromotionDto> CreatePromotion(CreatePromotionDto promotionRequest);
         Task<IReadOnlyList<PromotionDto>> GetAllPromotions();
+        Task<PromotionDto> GetPromotionById(int id);
     }
 }

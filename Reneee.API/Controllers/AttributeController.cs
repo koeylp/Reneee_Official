@@ -15,5 +15,17 @@ namespace Reneee.API.Controllers
         {
             return Ok(await _attributeService.CreateAttribute(attributeRequest));
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<AttributeDto>>> GetAllAttributes()
+        {
+            return Ok(await _attributeService.GetAllAttributes());
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<string>> DeleteAttribute(int id)
+        {
+            return Ok(await _attributeService.DeleteAttribute(id));
+        }
     }
 }

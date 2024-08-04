@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Reneee.Application.Contracts.Persistence;
 using Reneee.Application.DTOs.Payment;
+using Reneee.Application.Exceptions;
 using Reneee.Domain.Entities;
 
 namespace Reneee.Application.Services.Impl
@@ -27,6 +28,19 @@ namespace Reneee.Application.Services.Impl
             var savedPayment = await _paymentRepository.Add(paymentEntity);
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<PaymentDto>(savedPayment);
+        }
+
+        public async Task<string> DeletePaymentMethod(int id)
+        {
+            var paymentEntity = await _paymentRepository.Get(id)
+                                        ?? throw new NotFoundException("Payment method not found");
+            await _paymentRepository.Delete(paymentEntity);
+            return "Done deleting";
+        }
+
+        public async Task<IReadOnlyList<PaymentDto>> GetAllPayments()
+        {
+            return _mapper.Map<IReadOnlyList<PaymentDto>>(await _paymentRepository.GetAll());
         }
     }
 }

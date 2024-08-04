@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Reneee.Identity\Reneee.Identity.csproj" />
+    <ProjectReference Include="..\Reneee.Infrastructure\Reneee.Infrastructure.csproj" />
     <ProjectReference Include="..\Reneee.Persistence\Reneee.Persistence.csproj" />
   </ItemGroup>
 

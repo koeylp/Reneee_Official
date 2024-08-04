@@ -21,5 +21,11 @@ namespace Reneee.API.Controllers
         {
             return Ok(await _promotionService.GetAllPromotions());
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<PromotionDto>> GetPromotionById([FromRoute] int id)
+        {
+            return Ok(await _promotionService.GetPromotionById(id));
+        }
     }
 }

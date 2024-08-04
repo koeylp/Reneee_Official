@@ -15,5 +15,17 @@ namespace Reneee.API.Controllers
         {
             return Ok(await _paymentService.CreatePayment(paymentRequest));
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<PaymentDto>>> GetAllPayments()
+        {
+            return Ok(await _paymentService.GetAllPayments());
+        }
+
+        [HttpDelete("id")]
+        public async Task<ActionResult<string>> DeletePaymentMethod(int id)
+        {
+            return Ok(await _paymentService.DeletePaymentMethod(id));
+        }
     }
 }

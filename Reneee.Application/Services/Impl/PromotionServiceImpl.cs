@@ -88,5 +88,11 @@ namespace Reneee.Application.Services.Impl
             _logger.LogInformation("Fetching all Promotions");
             return _mapper.Map<IReadOnlyList<PromotionDto>>(await _promotionRepository.GetAll());
         }
+
+        public async Task<PromotionDto> GetPromotionById(int id)
+        {
+            _logger.LogInformation($"Entering method get promotion by id {id}");
+            return _mapper.Map<PromotionDto>(await _promotionRepository.Get(id));
+        }
     }
 }

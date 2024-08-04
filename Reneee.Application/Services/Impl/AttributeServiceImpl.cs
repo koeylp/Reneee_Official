@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using Reneee.Application.Contracts.Persistence;
 using Reneee.Application.DTOs.Attribute;
-using Reneee.Domain.Entities;
+using Reneee.Application.Exceptions;
 using Attribute = Reneee.Domain.Entities.Attribute;
 
 namespace Reneee.Application.Services.Impl
 {
-    public class AttributeServiceImpl(IAttributeRepository attributeRepository, IMapper mapper, IUnitOfWork unitOfWork) : IAttributeService
+    public class AttributeServiceImpl(IAttributeRepository attributeRepository,
+                                      IMapper mapper,
+                                      IUnitOfWork unitOfWork) : IAttributeService
     {
         private readonly IAttributeRepository _attributeRepository = attributeRepository;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
@@ -21,6 +23,19 @@ namespace Reneee.Application.Services.Impl
             Attribute savedAttribute = await _attributeRepository.Add(attributeEntity);
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<AttributeDto>(savedAttribute);
+        }
+
+        public async Task<string> DeleteAttribute(int id)
+        {
+            var attributeEntity = await _attributeRepository.Get(id)
+                                ?? throw new NotFoundException("Attribute not found");
+            await _attributeRepository.Delete(attributeEntity);
+            return "Done deleting";
+        }
+
+        public async Task<IReadOnlyList<AttributeDto>> GetAllAttributes()
+        {
+            return _mapper.Map<IReadOnlyList<AttributeDto>>(await _attributeRepository.GetAll());
         }
     }
 }

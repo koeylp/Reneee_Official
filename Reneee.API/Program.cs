@@ -2,6 +2,7 @@ using Microsoft.OpenApi.Models;
 using Reneee.API.Middleware;
 using Reneee.Application;
 using Reneee.Identity;
+using Reneee.Infrastructure;
 using Reneee.Persistence;
 
 namespace Reneee.API
@@ -21,6 +22,8 @@ namespace Reneee.API
             builder.Services.ConfigureApplicationServices();
             builder.Services.ConfigureIdentityServices(builder.Configuration);
             builder.Services.AddHttpContextAccessor();
+            builder.Services.ConfigureInfrastructureServices();
+            //builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
             // Add services to the container.
             builder.Services.AddControllers();

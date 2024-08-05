@@ -1,6 +1,10 @@
-﻿namespace Reneee.Application.Services
+﻿using Reneee.Application.DTOs.Comment;
+
+namespace Reneee.Application.Services
 {
-    public class ICommentService
+    public interface ICommentService
     {
+        Task<CommentDto> CreateComment(CreateCommentDto commentRequest);
+        Task<IReadOnlyList<CommentDto>> GetCommentByProduct(int id);
     }
 }

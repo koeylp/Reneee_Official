@@ -68,9 +68,6 @@ namespace Reneee.Application.Services.Impl
                         };
                         orderDetailsEntities.Add(orderDetailsEntity);
                     }
-
-                    string message = await _stripePaymentService.CreatePaymentIntentAsync(100, "usd");
-                    _logger.LogInformation(message);
                     await _orderDetailsRepository.AddRange(orderDetailsEntities);
                     await _unitOfWork.SaveChangesAsync();
                     await transaction.CommitAsync();

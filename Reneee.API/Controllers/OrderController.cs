@@ -15,5 +15,23 @@ namespace Reneee.API.Controllers
         {
             return Ok(await _orderService.CreateOrder(orderRequest));
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<OrderDto>> GetOrderById([FromRoute] int id)
+        {
+            return Ok(await _orderService.GetOrderById(id));
+        }
+
+        [HttpGet("staff")]
+        public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetAllOrders()
+        {
+            return Ok(await _orderService.GetAllOrders());
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetOrdersByUser()
+        {
+            return Ok(await _orderService.GetOrdersByUser());
+        }
     }
 }

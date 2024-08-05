@@ -27,5 +27,11 @@ namespace Reneee.API.Controllers
         {
             return Ok(await _attributeService.DeleteAttribute(id));
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<AttributeDto>> UpdateAttibute([FromRoute] int id, [FromBody] CreateUpdateAttributeDto attributeRequest)
+        {
+            return Ok(await _attributeService.UpdateAttibute(id, attributeRequest));
+        }
     }
 }

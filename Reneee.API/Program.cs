@@ -11,6 +11,7 @@ namespace Reneee.API
     {
         public static void Main(string[] args)
         {
+            var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
             var builder = WebApplication.CreateBuilder(args);
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();
@@ -22,18 +23,17 @@ namespace Reneee.API
             builder.Services.ConfigureApplicationServices();
             builder.Services.ConfigureIdentityServices(builder.Configuration);
             builder.Services.AddHttpContextAccessor();
-            builder.Services.ConfigureInfrastructureServices();
-            //builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
+            builder.Services.ConfigureInfrastructureServices(builder.Configuration);
 
             // Add services to the container.
             builder.Services.AddControllers();
-
-            builder.Services.AddCors(o =>
+            builder.Services.AddCors(options =>
             {
-                o.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  policy =>
+                                  {
+                                      policy.WithOrigins("http://localhost:5173");
+                                  });
             });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -89,6 +89,8 @@ namespace Reneee.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseHttpsRedirection();
 

@@ -10,6 +10,8 @@ namespace Reneee.Domain.Entities
         public string Name { get; set; }
         [Column(TypeName = "ntext")]
         public string Thumbnail { get; set; }
+        [Column(TypeName = "ntext")]
+        public string ThumbnailCate { get; set; }
 
         [Column(TypeName = "ntext")]
         public string? Description { get; set; }

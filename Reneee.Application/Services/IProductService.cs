@@ -12,5 +12,7 @@ namespace Reneee.Application.Services
         Task<IReadOnlyList<ProductDto>> GetAllProducts();
         Task<IReadOnlyList<ProductDto>> GetByPromotionId(int id);
         Task<ProductDto> GetProductById(int id);
+        Task<IReadOnlyList<ProductDto>> SearchProduct(string search);
+        Task<ProductDto> UpdateProduct(int id, CreateProductDto productRequest);
     }
 }

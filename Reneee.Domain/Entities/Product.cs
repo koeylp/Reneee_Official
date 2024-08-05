@@ -24,7 +24,8 @@ namespace Reneee.Domain.Entities
         [Column(TypeName = "ntext")]
         public string? AdditionalInfo { get; set; }
         public int Status { get; set; }
-        public DateTime? CreatedAt { get; set; } 
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public virtual Category Category { get; set; }
         public virtual ICollection<ProductImage> ProductImages { get; set; }
         public virtual ICollection<ProductAttribute>? ProductAttributes { get; set; }

@@ -49,5 +49,16 @@ namespace Reneee.Persistence.Repositories
         {
             return await _dbContext.Products.Where(p => p.CategoryId == categoryId).ToListAsync();
         }
+
+        public async Task<IReadOnlyList<Product>> Search(string search)
+        {
+            IQueryable<Product> query = _dbContext.Set<Product>();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(p => p.Name.Contains(search));
+            }
+            return await query.ToListAsync();
+        }
     }
 }

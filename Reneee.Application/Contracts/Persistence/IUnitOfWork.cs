@@ -18,6 +18,7 @@ namespace Reneee.Application.Contracts.Persistence
         ITransactionRepository TransactionRepository { get; }
         IUserRepository UserRepository { get; }
         IExecutionStrategy CreateExecutionStrategy();
+        ICommentRepository CommentRepository { get; }
         Task<IDbContextTransaction> BeginTransactionAsync();
         Task SaveChangesAsync();
     }

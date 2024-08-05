@@ -37,5 +37,15 @@ namespace Reneee.Application.Services.Impl
         {
             return _mapper.Map<IReadOnlyList<AttributeDto>>(await _attributeRepository.GetAll());
         }
+
+        public async Task<AttributeDto> UpdateAttibute(int id, CreateUpdateAttributeDto attributeRequest)
+        {
+            var attributeEntity = await _attributeRepository.Get(id)
+                                    ?? throw new NotFoundException("Attribute not found");
+            attributeEntity.Name = attributeRequest.Name ?? attributeEntity.Name;
+            await _attributeRepository.Update(attributeEntity);
+            await _unitOfWork.SaveChangesAsync();
+            return _mapper.Map<AttributeDto>(attributeEntity);
+        }
     }
 }

@@ -101,5 +101,22 @@ namespace Reneee.Application.Services.Impl
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<CategoryDto>(updatedCategory);
         }
+
+        public async Task<CategoryDto> UpdateCategory(int id, CreateCategoryDto categoryRequest)
+        {
+            _logger.LogInformation($"Updating category with ID {id}");
+
+            var existingCategory = await _categoryRepository.Get(id)
+                            ?? throw new NotFoundException($"Category with ID {id} not found.");
+
+            existingCategory.Name = categoryRequest.Name ?? existingCategory.Name;
+            existingCategory.Description = categoryRequest.Description ?? existingCategory.Description;
+
+            await _categoryRepository.Update(existingCategory);
+            await _unitOfWork.SaveChangesAsync();
+            _logger.LogInformation($"Category with ID {id} updated successfully");
+
+            return _mapper.Map<CategoryDto>(existingCategory);
+        }
     }
 }

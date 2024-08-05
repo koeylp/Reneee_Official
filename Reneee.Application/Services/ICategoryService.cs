@@ -10,5 +10,6 @@ namespace Reneee.Application.Services
         Task<IReadOnlyList<CategoryDto>> GetAllCategories();
         Task<string> DeleteCategory(int id);
         Task<CategoryDto> DisableCategory(int id);
+        Task<CategoryDto> UpdateCategory(int id, CreateCategoryDto categoryRequest);
     }
 }

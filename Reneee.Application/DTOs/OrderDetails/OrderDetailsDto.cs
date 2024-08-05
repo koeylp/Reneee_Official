@@ -1,5 +1,4 @@
-﻿using Reneee.Application.DTOs.Order;
-using Reneee.Application.DTOs.ProductAttribute;
+﻿using Reneee.Application.DTOs.ProductAttribute;
 
 namespace Reneee.Application.DTOs.OrderDetails
 {
@@ -9,7 +8,6 @@ namespace Reneee.Application.DTOs.OrderDetails
         public decimal Price { get; set; }
         public int Quantity { get; set; }
         public int Status { get; set; }
-        public OrderDto? Order { get; set; }
-        public ProductAttributeInfoDto? ProductAttributeInfo { get; set; }
+        public ProductAttributeInfoDto ProductAttributeInfo { get; set; }
     }
 }

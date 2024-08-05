@@ -2,6 +2,7 @@
 using Reneee.Application.DTOs.Attribute;
 using Reneee.Application.DTOs.AttributeValue;
 using Reneee.Application.DTOs.Category;
+using Reneee.Application.DTOs.Comment;
 using Reneee.Application.DTOs.Order;
 using Reneee.Application.DTOs.OrderDetails;
 using Reneee.Application.DTOs.Payment;
@@ -20,24 +21,27 @@ namespace Reneee.Application.Profiles
 {
     public class MappingProfile : Profile
     {
-        public MappingProfile() 
+        public MappingProfile()
         {
             CreateMap<Attribute, AttributeDto>().ReverseMap();
             CreateMap<AttributeValue, AttributeValueDto>().ReverseMap();
             CreateMap<CreateCategoryDto, Category>();
             CreateMap<Category, CategoryDto>().ReverseMap();
             CreateMap<Order, OrderDto>().ReverseMap();
-            CreateMap<OrderDetails, OrderDetailsDto>().ReverseMap();
+            CreateMap<OrderDetails, OrderDetailsDto>()
+                .ForMember(dest => dest.ProductAttributeInfo, opt => opt.MapFrom(src => src.ProductAttribute));
             CreateMap<Payment, PaymentDto>().ReverseMap();
             CreateMap<Product, ProductDto>().ReverseMap();
             CreateMap<Product, ProductInfoDto>();
             CreateMap<ProductAttribute, ProductAttributeDto>().ReverseMap();
-            CreateMap<ProductAttribute, ProductAttributeInfoDto>();
+            CreateMap<ProductAttribute, ProductAttributeInfoDto>()
+                .ForMember(dest => dest.ProductInfo, opt => opt.MapFrom(src => src.Product));
             CreateMap<ProductImage, ProductImageDto>().ReverseMap();
             CreateMap<ProductPromotion, ProductPromotionDto>().ReverseMap();
             CreateMap<Promotion, PromotionDto>().ReverseMap();
             CreateMap<Transaction, TransactionDto>().ReverseMap();
             CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<Comment, CommentDto>().ReverseMap();
         }
 
     }

@@ -63,5 +63,17 @@ namespace Reneee.API.Controllers
         {
             return Ok(await _productService.GetByPromotionId(id));
         }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<IReadOnlyList<ProductDto>>> SearchProduct([FromQuery] string search)
+        {
+            return Ok(await _productService.SearchProduct(search));
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ProductDto>> UpdateProduct([FromRoute] int id, [FromBody] CreateProductDto productRequest)
+        {
+            return Ok(await _productService.UpdateProduct(id, productRequest));
+        }
     }
 }

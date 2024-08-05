@@ -7,5 +7,6 @@ namespace Reneee.Application.Services
         Task<AttributeDto> CreateAttribute(CreateUpdateAttributeDto attributeRequest);
         Task<string> DeleteAttribute(int id);
         Task<IReadOnlyList<AttributeDto>> GetAllAttributes();
+        Task<AttributeDto> UpdateAttibute(int id, CreateUpdateAttributeDto attributeRequest);
     }
 }

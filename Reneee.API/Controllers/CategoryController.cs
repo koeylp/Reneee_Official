@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Reneee.Application.Constants;
+﻿using Microsoft.AspNetCore.Mvc;
 using Reneee.Application.DTOs.Category;
 using Reneee.Application.Services;
 using Swashbuckle.AspNetCore.Annotations;
@@ -23,7 +21,7 @@ namespace Reneee.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
+        //[Authorize(Roles = RoleConstants.ROLE_STAFF)]
         public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetAllCategories()
         {
             return Ok(await _categoryService.GetAllCategories());
@@ -35,7 +33,7 @@ namespace Reneee.API.Controllers
             return Ok(await _categoryService.GetAllActiveCategories());
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("enable/{id}")]
         //[Authorize(Roles = RoleConstants.ROLE_STAFF)]
         [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -58,6 +56,13 @@ namespace Reneee.API.Controllers
         public async Task<ActionResult<CategoryDto>> DisableCategory([FromRoute] int id)
         {
             return Ok(await _categoryService.DisableCategory(id));
+        }
+
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<CategoryDto>> UpdateCategory([FromRoute] int id, [FromBody] CreateCategoryDto categoryRequest)
+        {
+            return Ok(await _categoryService.UpdateCategory(id, categoryRequest));
         }
     }
 }

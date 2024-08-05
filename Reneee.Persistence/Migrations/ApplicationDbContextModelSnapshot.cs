@@ -92,9 +92,43 @@ namespace Reneee.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("ntext");
 
+                    b.Property<string>("ThumbnailCate")
+                        .IsRequired()
+                        .HasColumnType("ntext");
+
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Reneee.Domain.Entities.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("ntext");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Reneee.Domain.Entities.Order", b =>
@@ -237,6 +271,9 @@ namespace Reneee.Persistence.Migrations
 
                     b.Property<int>("TotalQuantity")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -447,6 +484,25 @@ namespace Reneee.Persistence.Migrations
                         .HasForeignKey("AttributeId");
 
                     b.Navigation("Attribute");
+                });
+
+            modelBuilder.Entity("Reneee.Domain.Entities.Comment", b =>
+                {
+                    b.HasOne("Reneee.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Reneee.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Reneee.Domain.Entities.Order", b =>

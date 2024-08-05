@@ -22,6 +22,7 @@ namespace Reneee.Persistence.Repositories
         private ITransactionRepository? _transactionRepository;
         private IUserRepository? _userRepository;
         private IDbContextTransaction _currentTransaction;
+        private ICommentRepository? _commentRepository;
 
 
         public IAttributeRepository AttributeRepository =>
@@ -50,6 +51,8 @@ namespace Reneee.Persistence.Repositories
             _transactionRepository ??= new TransactionRepository(_context);
         public IUserRepository UserRepository =>
             _userRepository ??= new UserRepository(_context);
+        public ICommentRepository CommentRepository =>
+            _commentRepository ??= new CommentRepository(_context);
 
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()

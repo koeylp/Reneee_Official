@@ -19,11 +19,11 @@ namespace Reneee.Persistence
         public DbSet<Promotion> Promotions { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<User> Users { get; set; }
-
+        public DbSet<Comment> Comments { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(e => e.Gender)
@@ -65,12 +65,12 @@ namespace Reneee.Persistence
                 entity.HasOne(e => e.Order)
                     .WithMany()
                     .HasForeignKey(e => e.OrderId)
-                    .OnDelete(DeleteBehavior.Restrict); 
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(e => e.User)
                     .WithMany()
                     .HasForeignKey(e => e.UserId)
-                    .OnDelete(DeleteBehavior.Restrict); 
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<ProductAttribute>(entity =>

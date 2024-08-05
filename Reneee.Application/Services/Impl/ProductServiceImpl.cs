@@ -175,6 +175,97 @@ namespace Reneee.Application.Services.Impl
             return _mapper.Map<ProductDto>(productEntity);
         }
 
+        public async Task<IReadOnlyList<ProductDto>> SearchProduct(string search)
+        {
+            return _mapper.Map<IReadOnlyList<ProductDto>>(await _productRepository.Search(search));
+        }
+
+        public async Task<ProductDto> UpdateProduct(int productId, CreateProductDto productRequest)
+        {
+            _logger.LogInformation("Updating product with ID {ProductId}", productId);
+            var strategy = _unitOfWork.CreateExecutionStrategy();
+
+            return await strategy.ExecuteAsync(async () =>
+            {
+                using var transaction = await _unitOfWork.BeginTransactionAsync();
+                try
+                {
+                    var productEntity = await _productRepository.Get(productId)
+                                        ?? throw new NotFoundException("Product not found with id " + productId);
+
+                    var categoryEntity = await _categoryRepository.GetCategoryByIdAndStatus(productRequest.CategoryId, 1)
+                                        ?? throw new NotFoundException("Category not found with id " + productRequest.CategoryId);
+
+                    productEntity.Name = productRequest.Name;
+                    productEntity.Thumbnail = productRequest.Thumbnail;
+                    productEntity.OriginalPrice = productRequest.OriginalPrice;
+                    productEntity.DiscountPrice = productRequest.OriginalPrice;
+                    productEntity.Description = productRequest.Description;
+                    productEntity.AdditionalInfo = productRequest.AdditionalInfo;
+                    productEntity.Ingredients = productRequest.Ingredients;
+                    productEntity.Guideline = productRequest.Guideline;
+                    productEntity.Category = categoryEntity;
+                    productEntity.UpdatedAt = DateTime.Now;
+
+                    if (productRequest.ProductImages != null)
+                    {
+                        var existingImages = await _productImageRepository.GetByProductId(productId);
+                        _productImageRepository.RemoveRange(existingImages);
+
+                        var newImages = productRequest.ProductImages.Select(imageUrl => new ProductImage
+                        {
+                            Url = imageUrl,
+                            Product = productEntity,
+                            Status = 1
+                        }).ToList();
+
+                        await _productImageRepository.AddRange(newImages);
+                    }
+
+                    int totalQuantity = 0;
+                    if (productRequest.ProductAttributeValues != null)
+                    {
+                        var existingAttributes = await _productAttributeRepository.GetByProductId(productId);
+                        _productAttributeRepository.RemoveRange(existingAttributes);
+
+                        foreach (var item in productRequest.ProductAttributeValues)
+                        {
+                            var attributeValueEntity = await _attributeValueRepository.Get(item.attibuteValueId)
+                                ?? throw new NotFoundException("Attribute value not found with id " + item.attibuteValueId);
+
+                            var productAttributeEntity = new ProductAttribute
+                            {
+                                Product = productEntity,
+                                AttributeValue = attributeValueEntity,
+                                AttributePrice = item.attributePrice,
+                                Stock = item.stock,
+                                Status = 0
+                            };
+
+                            await _productAttributeRepository.Add(productAttributeEntity);
+                            totalQuantity += item.stock;
+                        }
+                    }
+
+                    productEntity.TotalQuantity = totalQuantity;
+
+                    await _productRepository.Update(productEntity);
+                    await _unitOfWork.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    _logger.LogInformation("Product updated with ID {ProductId}", productEntity.Id);
+                    return _mapper.Map<ProductDto>(productEntity);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error occurred while updating product");
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
+        }
+
+
         private async Task<Product> CallAndSetStatusProduct(int id, int status)
         {
             _logger.LogInformation("Setting status for product with ID {Id} to {Status}", id, status);

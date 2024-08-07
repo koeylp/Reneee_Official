@@ -11,7 +11,7 @@ namespace Reneee.Application.Services.CronJobs
     {
         private readonly ILogger<PromotionPriceUpdaterService> _logger = logger;
         private readonly IServiceProvider _serviceProvider = serviceProvider;
-        private readonly string _cronExpression = "0 0 * * *";
+        private readonly string _cronExpression = "*/5 * * * *";
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {

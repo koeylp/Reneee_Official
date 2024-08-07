@@ -14,5 +14,11 @@ namespace Reneee.Persistence.Repositories
                         .Where(p => p.StartDate <= DateTime.UtcNow && p.Status == 1)
                         .ToListAsync();
         }
+
+        public async Task<Promotion> GetByIdAndStatus(int id, int status)
+        {
+            return await _dbContext.Promotions
+                                .FirstOrDefaultAsync(p => p.Id == id && p.Status == status);
+        }
     }
 }

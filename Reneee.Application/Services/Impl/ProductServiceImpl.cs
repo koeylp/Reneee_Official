@@ -52,6 +52,7 @@ namespace Reneee.Application.Services.Impl
                         Ingredients = productRequest.Ingredients,
                         Guideline = productRequest.Guideline,
                         CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now,
                         Category = categoryEntity,
                         Status = 0
                     };

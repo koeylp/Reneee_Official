@@ -1,5 +1,4 @@
 ﻿using Reneee.Application.DTOs.AttributeValue;
-using Reneee.Application.DTOs.Product;
 
 namespace Reneee.Application.DTOs.ProductAttribute
 {

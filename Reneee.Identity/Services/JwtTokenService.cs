@@ -19,8 +19,8 @@ namespace Reneee.Identity.Services
             {
                 new(JwtRegisteredClaimNames.Email, user.Email),
                 new(ClaimTypes.Role, user.Role),
-                new(ClaimTypes.DateOfBirth, user.Dob.ToString())
-
+                new(ClaimTypes.DateOfBirth, user.Dob.ToString()),
+                new(JwtRegisteredClaimNames.Sub, user.FirstName)
             };
             var _privateKey = RSAKeyUtils.GetPrivateKey(_jwtSettings.PrivateKeyPath);
             var credentials = new SigningCredentials(new RsaSecurityKey(_privateKey), SecurityAlgorithms.RsaSha256);

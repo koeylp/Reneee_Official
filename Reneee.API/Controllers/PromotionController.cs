@@ -27,5 +27,13 @@ namespace Reneee.API.Controllers
         {
             return Ok(await _promotionService.GetPromotionById(id));
         }
+
+        [HttpPut("disable/{id}")]
+        public async Task<ActionResult<PromotionDto>> DisablePromotion([FromRoute] int id)
+        {
+            return Ok(await _promotionService.DisablePromotion(id));
+        }
+
+        
     }
 }

@@ -83,6 +83,16 @@ namespace Reneee.Application.Services.Impl
             });
         }
 
+        public async Task<PromotionDto> DisablePromotion(int id)
+        {
+            _logger.LogInformation($"Enter diasble promotion id {id}");
+            var promotionEntity = await _promotionRepository.GetByIdAndStatus(id, 1) ?? throw new NotFoundException("Promotion not found or is not active");
+            promotionEntity.Status = 0;
+            await _promotionRepository.Update(promotionEntity);
+            await _unitOfWork.SaveChangesAsync();
+            return _mapper.Map<PromotionDto>(promotionEntity);
+        }
+
         public async Task<IReadOnlyList<PromotionDto>> GetAllPromotions()
         {
             _logger.LogInformation("Fetching all Promotions");

@@ -39,11 +39,30 @@ namespace Reneee.Application.Services.Impl
             return _mapper.Map<CommentDto>(commentEntity);
         }
 
+        public async Task<string> DeleteComment(int id)
+        {
+            var commentEntity = await _commentRepository.Get(id) ?? throw new NotFoundException("Comment not found");
+            await _commentRepository.Delete(commentEntity);
+            await _unitOfWork.SaveChangesAsync();
+            return "Done deleting";
+        }
+
+        public async Task<CommentDto> EditComment(int id, UpdateCommentDto commentRequest)
+        {
+            var commentEntity = await _commentRepository.Get(id) ?? throw new NotFoundException("Comment not found");
+            commentEntity.Content = commentRequest.Content;
+            await _commentRepository.Update(commentEntity);
+            await _unitOfWork.SaveChangesAsync();
+            return _mapper.Map<CommentDto>(commentEntity);
+        }
+
         public async Task<IReadOnlyList<CommentDto>> GetCommentByProduct(int id)
         {
             var productEntity = await _productRepository.Get(id)
                                     ?? throw new NotFoundException("Product not found");
             return _mapper.Map<IReadOnlyList<CommentDto>>(await _commentRepository.GetCommentByProduct(productEntity));
         }
+
+
     }
 }

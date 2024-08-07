@@ -21,5 +21,17 @@ namespace Reneee.API.Controllers
         {
             return Ok(await _commentService.GetCommentByProduct(id));
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<string>> DeleteComment([FromRoute] int id)
+        {
+            return Ok(await _commentService.DeleteComment(id));
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<CommentDto>> EditComment([FromRoute] int id, [FromBody] UpdateCommentDto commentRequest)
+        {
+            return Ok(await _commentService.EditComment(id, commentRequest));
+        }
     }
 }

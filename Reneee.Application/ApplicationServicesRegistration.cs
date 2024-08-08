@@ -23,8 +23,8 @@ namespace Reneee.Application
             services.AddScoped<ITransactionService, TransactionServiceImpl>();
             services.AddScoped<IUserService, UserServiceImpl>();
             services.AddScoped<IAttributeValueService, AttributeValueServiceImpl>();
-            services.AddHostedService<PromotionPriceUpdaterService>();
             services.AddTransient<IStripePaymentService, StripePaymentService>();
+            services.AddHostedService<PromotionPriceUpdaterService>();
 
             return services;
         }

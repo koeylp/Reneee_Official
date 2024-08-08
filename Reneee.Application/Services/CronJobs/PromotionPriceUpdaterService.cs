@@ -6,42 +6,41 @@ using Reneee.Application.Contracts.Persistence;
 
 namespace Reneee.Application.Services.CronJobs
 {
-    public class PromotionPriceUpdaterService(ILogger<PromotionPriceUpdaterService> logger,
-                                              IServiceProvider serviceProvider) : BackgroundService
+    public class PromotionPriceUpdaterService : IHostedService, IDisposable
     {
-        private readonly ILogger<PromotionPriceUpdaterService> _logger = logger;
-        private readonly IServiceProvider _serviceProvider = serviceProvider;
-        private readonly string _cronExpression = "*/5 * * * *";
+        private readonly ILogger<PromotionPriceUpdaterService> _logger;
+        private readonly IServiceProvider _serviceProvider;
+        private Timer _timer;
+        private readonly string _cronExpression = "0 * * * *";
+        private CronExpression _cronSchedule;
+        private DateTime _nextRun;
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        public PromotionPriceUpdaterService(ILogger<PromotionPriceUpdaterService> logger, IServiceProvider serviceProvider)
         {
-            _logger.LogInformation("Updating promotion statuses at {Time}", DateTimeOffset.Now);
-            var cronExpression = CronExpression.Parse(_cronExpression);
-            while (!stoppingToken.IsCancellationRequested)
+            _logger = logger;
+            _serviceProvider = serviceProvider;
+            _cronSchedule = CronExpression.Parse(_cronExpression);
+            _nextRun = _cronSchedule.GetNextOccurrence(DateTime.UtcNow) ?? DateTime.MinValue;
+        }
+
+        public Task StartAsync(CancellationToken stoppingToken)
+        {
+            _logger.LogInformation("Promotion Price Updater Service running.");
+            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+            return Task.CompletedTask;
+        }
+
+        private async void DoWork(object state)
+        {
+            var now = DateTime.UtcNow;
+            if (now >= _nextRun)
             {
-                var now = DateTime.UtcNow;
-                var next = cronExpression.GetNextOccurrence(now);
-
-                if (next.HasValue)
-                {
-                    var delay = next.Value - now;
-                    if (delay.TotalMilliseconds > 0)
-                    {
-                        await Task.Delay(delay, stoppingToken);
-                    }
-
-                    var shouldContinue = await UpdatePromotionStatuses(stoppingToken);
-
-                    if (!shouldContinue)
-                    {
-                        _logger.LogInformation("No more promotions to update, stopping service.");
-                        break;
-                    }
-                }
+                _nextRun = _cronSchedule.GetNextOccurrence(DateTime.UtcNow) ?? DateTime.MinValue;
+                await UpdatePromotionStatuses(CancellationToken.None);
             }
         }
 
-        private async Task<bool> UpdatePromotionStatuses(CancellationToken stoppingToken)
+        private async Task UpdatePromotionStatuses(CancellationToken stoppingToken)
         {
             _logger.LogInformation("Updating promotion statuses at {Time}", DateTimeOffset.Now);
 
@@ -58,7 +57,8 @@ namespace Reneee.Application.Services.CronJobs
 
                 if (promotionsToUpdate.Count == 0)
                 {
-                    return false;
+                    _logger.LogInformation("No promotions to update at {Time}", DateTimeOffset.Now);
+                    return;
                 }
 
                 foreach (var promotion in promotionsToUpdate)
@@ -82,13 +82,23 @@ namespace Reneee.Application.Services.CronJobs
                             }
                         }
                     }
-
                 }
                 await unitOfWork.SaveChangesAsync();
             }
 
             _logger.LogInformation("Finished updating promotion statuses at {Time}", DateTimeOffset.Now);
-            return true;
+        }
+
+        public Task StopAsync(CancellationToken stoppingToken)
+        {
+            _logger.LogInformation("Promotion Price Updater Service is stopping.");
+            _timer?.Change(Timeout.Infinite, 0);
+            return Task.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+            _timer?.Dispose();
         }
     }
 }

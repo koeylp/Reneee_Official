@@ -33,5 +33,17 @@ namespace Reneee.API.Controllers
         {
             return Ok(await _orderService.GetOrdersByUser());
         }
+
+        [HttpPut("status/update")] 
+        public async Task<ActionResult<OrderDto>> UpdateOrderStatus([FromQuery] int id, int status)
+        {
+            return Ok(await _orderService.UpdateOrderStatus(id, status));
+        }
+
+        [HttpPut("cancel/{id}")]
+        public async Task<ActionResult<OrderDto>> CancelOrder([FromRoute] int id)
+        {
+            return Ok(await _orderService.CancelOrder(id));
+        }
     }
 }

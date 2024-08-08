@@ -83,6 +83,16 @@ namespace Reneee.Application.Services.Impl
             });
         }
 
+        public async Task<string> DeletePromotion(int id)
+        {
+            _logger.LogInformation($"Enter delete promotion with id {id}");
+            var promotionEntity = await _promotionRepository.Get(id) ?? throw new NotFoundException("Promotion not found to delete");
+            if (promotionEntity.Status == 1) throw new BadRequestException("Cannot delete promotion due to be active");
+            await _promotionRepository.Delete(promotionEntity);
+            await _unitOfWork.SaveChangesAsync();
+            return "Done deleting";
+        }
+
         public async Task<PromotionDto> DisablePromotion(int id)
         {
             _logger.LogInformation($"Enter diasble promotion id {id}");

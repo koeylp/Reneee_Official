@@ -34,6 +34,12 @@ namespace Reneee.API.Controllers
             return Ok(await _promotionService.DisablePromotion(id));
         }
 
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<string>> DeletePromotion([FromRoute] int id)
+        {
+            return Ok(await _promotionService.DeletePromotion(id));
+        }
+
         
     }
 }

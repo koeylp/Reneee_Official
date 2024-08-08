@@ -14,9 +14,9 @@ namespace Reneee.Application.Services.Impl
                                   IPaymentRepository paymentRepository,
                                   IProductAttributeRepository productAttributeRepository,
                                   IUserRepository userRepository,
+                                  IProductRepository productRepository,
                                   IUnitOfWork unitOfWork,
                                   ILogger<OrderServiceImpl> logger,
-                                  IStripePaymentService stripePaymentService,
                                   IMapper mapper) : IOrderService
     {
         private readonly IOrderRepository _orderRepository = orderRepository;
@@ -24,10 +24,53 @@ namespace Reneee.Application.Services.Impl
         private readonly IPaymentRepository _paymentRepository = paymentRepository;
         private readonly IProductAttributeRepository _productAttributeRepository = productAttributeRepository;
         private readonly IUserRepository _userRepository = userRepository;
+        private readonly IProductRepository _productRepository = productRepository;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<OrderServiceImpl> _logger = logger;
-        private readonly IStripePaymentService _stripePaymentService = stripePaymentService;
         private readonly IMapper _mapper = mapper;
+
+        public async Task<OrderDto> CancelOrder(int id)
+        {
+            _logger.LogInformation("Entering method cancel order");
+
+            var strategy = _unitOfWork.CreateExecutionStrategy();
+
+            return await strategy.ExecuteAsync(async () =>
+            {
+                using var transaction = await _unitOfWork.BeginTransactionAsync();
+                try
+                {
+                    var orderEntity = await GetOrder(id);
+                    orderEntity.Status = -1;
+
+                    var orderDetails = await _orderDetailsRepository.GetOrderDetailsByOrderId(id);
+                    foreach (var item in orderDetails)
+                    {
+                        var productAttributeEntity = await _productAttributeRepository.Get(item.ProductAttribute.Id);
+                        productAttributeEntity.Stock += item.Quantity;
+                        await _productAttributeRepository.Update(productAttributeEntity);
+
+                        var productEntity = await _productRepository.Get(item.ProductAttribute.ProductID);
+                        productEntity.TotalQuantity += item.Quantity;
+                        await _productRepository.Update(productEntity);
+                    }
+
+                    await _orderRepository.Update(orderEntity);
+                    await _unitOfWork.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return _mapper.Map<OrderDto>(orderEntity);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error occurred while cancelling order");
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+
+            });
+
+        }
+
         public async Task<OrderDto> CreateOrder(CreateOrderDto orderRequest)
         {
             _logger.LogInformation("Entering method CreateOrder with body CreateOrderDto");
@@ -57,6 +100,15 @@ namespace Reneee.Application.Services.Impl
                     {
                         var productAttributeEntity = await _productAttributeRepository.Get(item.ProductAttribtueId)
                                                     ?? throw new NotFoundException($"Product Attribute with id {item.ProductAttribtueId} not found");
+                        if (productAttributeEntity.Stock <= 0) throw new BadRequestException($"{productAttributeEntity.Product.Name} got out of stock");
+                        productAttributeEntity.Stock -= item.Quantity;
+                        if (productAttributeEntity.Stock == 0) productAttributeEntity.Status = -1;
+                        await _productAttributeRepository.Update(productAttributeEntity);
+
+                        var productEntity = await _productRepository.Get(productAttributeEntity.ProductID);
+                        productEntity.TotalQuantity -= item.Quantity;
+                        await _productRepository.Update(productEntity);
+
                         var orderDetailsEntity = new OrderDetails
                         {
                             Order = savedOrder,
@@ -91,8 +143,7 @@ namespace Reneee.Application.Services.Impl
 
         public async Task<OrderDto> GetOrderById(int id)
         {
-            var orderEntity = await _orderRepository.Get(id)
-                            ?? throw new NotFoundException($"Order not found with id {id}");
+            var orderEntity = await GetOrder(id);
             return _mapper.Map<OrderDto>(orderEntity);
         }
 
@@ -104,6 +155,22 @@ namespace Reneee.Application.Services.Impl
             var orderDtos = _mapper.Map<List<OrderDto>>(orderEntities);
             var sortedOrders = orderDtos.OrderBy(order => order.OrderDate).ToList();
             return sortedOrders.AsReadOnly();
+        }
+
+        public async Task<OrderDto> UpdateOrderStatus(int id, int status)
+        {
+            var orderEntity = await GetOrder(id);
+            orderEntity.Status = status;
+            await _orderRepository.Update(orderEntity);
+            await _unitOfWork.SaveChangesAsync();
+            return _mapper.Map<OrderDto>(orderEntity);
+        }
+
+        private async Task<Order> GetOrder(int id)
+        {
+            var orderEntity = await _orderRepository.Get(id)
+                            ?? throw new NotFoundException($"Order not found with id {id}");
+            return orderEntity;
         }
     }
 }

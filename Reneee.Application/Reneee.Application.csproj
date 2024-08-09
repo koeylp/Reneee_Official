@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Reneee.Domain\Reneee.Domain.csproj" />
-    <ProjectReference Include="..\Reneee.Infrastructure\Reneee.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

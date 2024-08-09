@@ -3,8 +3,7 @@ using Reneee.Application.Services.Impl;
 using Reneee.Application.Services;
 using System.Reflection;
 using Reneee.Application.Services.CronJobs;
-using Reneee.Infrastructure.Payment.Interfaces;
-using Reneee.Infrastructure.Payment;
+
 
 namespace Reneee.Application
 {
@@ -23,7 +22,6 @@ namespace Reneee.Application
             services.AddScoped<ITransactionService, TransactionServiceImpl>();
             services.AddScoped<IUserService, UserServiceImpl>();
             services.AddScoped<IAttributeValueService, AttributeValueServiceImpl>();
-            services.AddTransient<IStripePaymentService, StripePaymentService>();
             services.AddHostedService<PromotionPriceUpdaterService>();
 
             return services;

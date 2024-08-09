@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
-using Reneee.Infrastructure.Payment.Interfaces;
+using Reneee.Application.Contracts.ThirdService;
 using Stripe;
 
 namespace Reneee.Infrastructure.Payment

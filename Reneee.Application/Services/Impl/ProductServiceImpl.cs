@@ -91,6 +91,21 @@ namespace Reneee.Application.Services.Impl
                             totalQuantity += item.stock;
                         }
                     }
+                    //else
+                    //{
+                    //    var attributeValueEntity = await _attributeValueRepository.GetByName("Original")
+                    //            ?? throw new NotFoundException("Attribute value not found when creating product attribute");
+                    //    var productAttributeEntity = new ProductAttribute
+                    //    {
+                    //        Product = savedProduct,
+                    //        AttributeValue = attributeValueEntity,
+                    //        AttributePrice = productRequest.OriginalPrice,
+                    //        Stock = 10,
+                    //        Status = 0
+                    //    };
+                    //    await _productAttributeRepository.Add(productAttributeEntity);
+                    //    totalQuantity += 10;
+                    //}
                     savedProduct.TotalQuantity = totalQuantity;
                     await _productRepository.Update(savedProduct);
                     await _unitOfWork.SaveChangesAsync();

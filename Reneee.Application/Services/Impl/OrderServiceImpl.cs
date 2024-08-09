@@ -5,7 +5,6 @@ using Reneee.Application.Contracts.Persistence;
 using Reneee.Application.DTOs.Order;
 using Reneee.Application.Exceptions;
 using Reneee.Domain.Entities;
-using Reneee.Infrastructure.Payment.Interfaces;
 
 namespace Reneee.Application.Services.Impl
 {
@@ -98,8 +97,8 @@ namespace Reneee.Application.Services.Impl
                     var orderDetailsEntities = new List<OrderDetails>();
                     foreach (var item in orderRequest.createOrderDetails)
                     {
-                        var productAttributeEntity = await _productAttributeRepository.Get(item.ProductAttribtueId)
-                                                    ?? throw new NotFoundException($"Product Attribute with id {item.ProductAttribtueId} not found");
+                        var productAttributeEntity = await _productAttributeRepository.Get(item.ProductAttributeId)
+                                                    ?? throw new NotFoundException($"Product Attribute with id {item.ProductAttributeId} not found");
                         if (productAttributeEntity.Stock <= 0) throw new BadRequestException($"{productAttributeEntity.Product.Name} got out of stock");
                         productAttributeEntity.Stock -= item.Quantity;
                         if (productAttributeEntity.Stock == 0) productAttributeEntity.Status = -1;

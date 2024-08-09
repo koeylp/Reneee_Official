@@ -1,4 +1,4 @@
-﻿namespace Reneee.Infrastructure.Payment.Interfaces
+﻿namespace Reneee.Application.Contracts.ThirdService
 {
     public interface IStripePaymentService
     {

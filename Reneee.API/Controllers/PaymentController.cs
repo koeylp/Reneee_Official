@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Reneee.Application.Contracts.ThirdService;
 using Reneee.Application.DTOs.Payment;
 using Reneee.Application.Services;
-using Reneee.Infrastructure.Payment.Interfaces;
 
 namespace Reneee.API.Controllers
 {

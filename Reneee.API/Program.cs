@@ -18,11 +18,10 @@ namespace Reneee.API
             builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
 
             builder.Services.ConfigurePersistenceServices(builder.Configuration);
-
+            builder.Services.ConfigureInfrastructureServices(builder.Configuration);
             builder.Services.ConfigureApplicationServices();
             builder.Services.ConfigureIdentityServices(builder.Configuration);
             builder.Services.AddHttpContextAccessor();
-            builder.Services.ConfigureInfrastructureServices(builder.Configuration);
 
             // Add services to the container.
             builder.Services.AddControllers();

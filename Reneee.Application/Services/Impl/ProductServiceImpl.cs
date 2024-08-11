@@ -84,6 +84,7 @@ namespace Reneee.Application.Services.Impl
                                 Product = savedProduct,
                                 AttributeValue = attributeValueEntity,
                                 AttributePrice = item.attributePrice,
+                                AttributeDiscountPrice = item.attributePrice,
                                 Stock = item.stock,
                                 Status = 0
                             };

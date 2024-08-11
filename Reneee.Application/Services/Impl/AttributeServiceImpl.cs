@@ -30,6 +30,7 @@ namespace Reneee.Application.Services.Impl
             var attributeEntity = await _attributeRepository.Get(id)
                                 ?? throw new NotFoundException("Attribute not found");
             await _attributeRepository.Delete(attributeEntity);
+            await _unitOfWork.SaveChangesAsync();
             return "Done deleting";
         }
 

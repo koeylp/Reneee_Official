@@ -77,6 +77,8 @@ namespace Reneee.Persistence
             {
                 entity.Property(e => e.AttributePrice)
                     .HasPrecision(18, 2);
+                entity.Property(e => e.AttributeDiscountPrice)
+                    .HasPrecision(18, 2);
             });
 
             modelBuilder.Entity<Promotion>(entity =>

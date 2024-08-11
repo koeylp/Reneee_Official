@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Reneee.Application.Contracts.Persistence;
+using Reneee.Domain.Entities;
 
 namespace Reneee.Application.Services.CronJobs
 {
@@ -14,6 +15,8 @@ namespace Reneee.Application.Services.CronJobs
         private readonly string _cronExpression = "0 * * * *";
         private CronExpression _cronSchedule;
         private DateTime _nextRun;
+        private const string PERCENTAGE = "Percentage";
+        private const string FIXED_AMOUNT = "FixedAmount";
 
         public PromotionPriceUpdaterService(ILogger<PromotionPriceUpdaterService> logger, IServiceProvider serviceProvider)
         {
@@ -49,6 +52,7 @@ namespace Reneee.Application.Services.CronJobs
                 var promotionRepository = scope.ServiceProvider.GetRequiredService<IPromotionRepository>();
                 var productPromotionRepository = scope.ServiceProvider.GetRequiredService<IProductPromotionRepository>();
                 var productRepository = scope.ServiceProvider.GetRequiredService<IProductRepository>();
+                var productAttributeRepository = scope.ServiceProvider.GetRequiredService<IProductAttributeRepository>();
                 var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
                 var promotions = await promotionRepository.GetAll();
@@ -70,16 +74,31 @@ namespace Reneee.Application.Services.CronJobs
 
                     foreach (var productPromotion in productPromotions)
                     {
+                        var productAttribute = productPromotion.ProductAttribute;
+                        switch (promotion.DiscountType.ToString())
+                        {
+                            case PERCENTAGE:
+                                productAttribute.AttributeDiscountPrice = productAttribute.AttributePrice * (1 - promotion.DiscountValue);
+                                break;
+                            case FIXED_AMOUNT:
+                                productAttribute.AttributeDiscountPrice = productAttribute.AttributePrice - promotion.DiscountValue;
+                                break;
+                        }
+                        await productAttributeRepository.Update(productAttribute);
                         productPromotion.Status = 1;
                         var products = await productPromotionRepository.GetProductByPromotionId(promotion.Id);
                         foreach (var product in products)
                         {
-                            product.DiscountPrice = product.OriginalPrice - promotion.DiscountValue;
-                            await productRepository.Update(product);
-                            foreach (var attribute in product.ProductAttributes)
+                            switch (promotion.DiscountType.ToString())
                             {
-                                attribute.AttributePrice = attribute.AttributePrice - promotion.DiscountValue;
+                                case PERCENTAGE:
+                                    product.DiscountPrice = product.OriginalPrice * (1 - promotion.DiscountValue);
+                                    break;
+                                case FIXED_AMOUNT:
+                                    product.DiscountPrice = product.OriginalPrice - promotion.DiscountValue;
+                                    break;
                             }
+                            await productRepository.Update(product);
                         }
                     }
                 }

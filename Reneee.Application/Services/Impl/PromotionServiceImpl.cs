@@ -49,6 +49,7 @@ namespace Reneee.Application.Services.Impl
                         StartDate = DateTime.Parse(promotionRequest.StartDate),
                         EndDate = DateTime.Parse(promotionRequest.EndDate),
                     };
+                    _logger.LogInformation(DateTime.Parse(promotionRequest.StartDate).ToString());
 
                     await _promotionRepository.Add(promotionEntity);
 

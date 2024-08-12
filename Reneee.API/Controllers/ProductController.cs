@@ -53,9 +53,10 @@ namespace Reneee.API.Controllers
         public async Task<ActionResult<IReadOnlyList<ProductDto>>> FilterProduct([FromQuery] decimal? filter_v_price_gte,
                                                                                     decimal? filter_v_price_lte,
                                                                                     string? sort_by,
-                                                                                    int? filter_v_availability)
+                                                                                    int? filter_v_availability,
+                                                                                    string? categories)
         {
-            return Ok(await _productService.FilterProduct(filter_v_price_gte, filter_v_price_lte, sort_by, filter_v_availability));
+            return Ok(await _productService.FilterProduct(filter_v_price_gte, filter_v_price_lte, sort_by, filter_v_availability, categories));
         }
 
         [HttpGet("promotion/{id}")]

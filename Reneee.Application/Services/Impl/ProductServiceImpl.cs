@@ -5,6 +5,7 @@ using Reneee.Application.Contracts.Persistence;
 using Reneee.Application.DTOs.Product;
 using Reneee.Application.Exceptions;
 using Reneee.Domain.Entities;
+using System.Collections.Generic;
 
 namespace Reneee.Application.Services.Impl
 {
@@ -72,41 +73,36 @@ namespace Reneee.Application.Services.Impl
                         }
                     }
                     int totalQuantity = 0;
-                    if (productRequest.ProductAttributeValues != null)
-                    {
-                        foreach (var item in productRequest.ProductAttributeValues)
-                        {
-                            var attributeValueEntity = await _attributeValueRepository.Get(item.attibuteValueId)
-                                ?? throw new NotFoundException("Attribute value not found when creating product attribute");
+                    var attributeValueInput = productRequest.ProductAttributeValues;
+                    if (attributeValueInput == null || attributeValueInput.Length == 0) throw new BadRequestException("AttributeValue is required!");
 
-                            var productAttributeEntity = new ProductAttribute
-                            {
-                                Product = savedProduct,
-                                AttributeValue = attributeValueEntity,
-                                AttributePrice = item.attributePrice,
-                                AttributeDiscountPrice = item.attributePrice,
-                                Stock = item.stock,
-                                Status = 0
-                            };
-                            await _productAttributeRepository.Add(productAttributeEntity);
-                            totalQuantity += item.stock;
+                    foreach (var item in attributeValueInput)
+                    {
+                        var attributeValueEntity = await _attributeValueRepository.Get(item.attibuteValueId)
+                            ?? throw new NotFoundException("Attribute value not found when creating product attribute");
+                        if (item.stock < 0)
+                        {
+                            throw new ArgumentException("Stock cannot be negative.");
                         }
+                        if (item.stock == 0) throw new ArgumentException("Stock is required");
+                        if (item.attributePrice < 0)
+                        {
+                            throw new ArgumentException("AttributePrice cannot be negative.");
+                        }
+
+                        var productAttributeEntity = new ProductAttribute
+                        {
+                            Product = savedProduct,
+                            AttributeValue = attributeValueEntity,
+                            AttributePrice = item.attributePrice,
+                            AttributeDiscountPrice = item.attributePrice,
+                            Stock = item.stock,
+                            Status = 0
+                        };
+                        await _productAttributeRepository.Add(productAttributeEntity);
+                        totalQuantity += item.stock;
                     }
-                    //else
-                    //{
-                    //    var attributeValueEntity = await _attributeValueRepository.GetByName("Original")
-                    //            ?? throw new NotFoundException("Attribute value not found when creating product attribute");
-                    //    var productAttributeEntity = new ProductAttribute
-                    //    {
-                    //        Product = savedProduct,
-                    //        AttributeValue = attributeValueEntity,
-                    //        AttributePrice = productRequest.OriginalPrice,
-                    //        Stock = 10,
-                    //        Status = 0
-                    //    };
-                    //    await _productAttributeRepository.Add(productAttributeEntity);
-                    //    totalQuantity += 10;
-                    //}
+
                     savedProduct.TotalQuantity = totalQuantity;
                     await _productRepository.Update(savedProduct);
                     await _unitOfWork.SaveChangesAsync();
@@ -164,13 +160,13 @@ namespace Reneee.Application.Services.Impl
         }
 
         public async Task<IReadOnlyList<ProductDto>> FilterProduct(decimal? filter_v_price_gte, decimal? filter_v_price_lte,
-                                                            string? sort_by, int? filter_v_availability)
+                                                            string? sort_by, int? filter_v_availability, string? categories)
         {
             _logger.LogInformation("Filtering products with price range {PriceGte} - {PriceLte}, sort by {SortBy}, availability {Availability}",
                 filter_v_price_gte, filter_v_price_lte, sort_by, filter_v_availability);
 
             return _mapper.Map<IReadOnlyList<ProductDto>>(await _productRepository
-                    .GetFilteredProducts(filter_v_price_gte, filter_v_price_lte, sort_by, filter_v_availability));
+                    .GetFilteredProducts(filter_v_price_gte, filter_v_price_lte, sort_by, filter_v_availability, categories));
         }
 
         public async Task<IReadOnlyList<ProductDto>> GetAllProducts()

@@ -21,6 +21,8 @@ namespace Reneee.Application.Services.Impl
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<PromotionServiceImpl> _logger = logger;
         private readonly IMapper _mapper = mapper;
+        private const string PERCENTAGE = "Percentage";
+        private const string FIXED_AMOUNT = "FixedAmount";
 
         public async Task<PromotionDto> CreatePromotion(CreatePromotionDto promotionRequest)
         {
@@ -33,6 +35,12 @@ namespace Reneee.Application.Services.Impl
                 using var transaction = await _unitOfWork.BeginTransactionAsync();
                 try
                 {
+                    if (DateTime.Parse(promotionRequest.StartDate) > DateTime.Parse(promotionRequest.EndDate))
+                        throw new BadRequestException("Start date must be smaller than End date");
+                    if (promotionRequest.DiscountValue <= 0)
+                        throw new BadRequestException("Discount Value must be greater than 0");
+                    if (promotionRequest.DiscountType == PERCENTAGE && promotionRequest.DiscountValue > 100)
+                        throw new BadRequestException("Discount value must be < 100");
                     var promotionEntity = new Promotion
                     {
                         Description = promotionRequest.Description,

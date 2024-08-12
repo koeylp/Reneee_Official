@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Reneee.Application.Contracts.Persistence;
-using Reneee.Domain.Entities;
 
 namespace Reneee.Application.Services.CronJobs
 {
@@ -12,7 +11,7 @@ namespace Reneee.Application.Services.CronJobs
         private readonly ILogger<PromotionPriceUpdaterService> _logger;
         private readonly IServiceProvider _serviceProvider;
         private Timer _timer;
-        private readonly string _cronExpression = "0 * * * *";
+        private readonly string _cronExpression = "* * * * *";
         private CronExpression _cronSchedule;
         private DateTime _nextRun;
         private const string PERCENTAGE = "Percentage";

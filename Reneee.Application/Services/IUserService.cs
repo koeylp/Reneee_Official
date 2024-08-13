@@ -1,5 +1,6 @@
 ﻿
 using Reneee.Application.DTOs.User;
+using Reneee.Domain.Entities;
 
 namespace Reneee.Application.Services
 {
@@ -9,5 +10,6 @@ namespace Reneee.Application.Services
         Task<UserDto> EnableUser(int id);
         Task<IReadOnlyList<UserDto>> GetAllUsers();
         Task<UserDto> GetUserById(int id);
+        Task<User> GetUserFromEmailClaims();
     }
 }

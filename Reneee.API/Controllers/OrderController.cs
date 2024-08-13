@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Reneee.Application.Constants;
 using Reneee.Application.DTOs.Order;
 using Reneee.Application.Services;
 
@@ -11,6 +13,7 @@ namespace Reneee.API.Controllers
         private readonly IOrderService _orderService = orderService;
 
         [HttpPost]
+        [Authorize(Roles = RoleConstants.ROLE_CUSTOMER)]
         public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderDto orderRequest)
         {
             return Ok(await _orderService.CreateOrder(orderRequest));

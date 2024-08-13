@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Reneee.Application.Contracts.Persistence;
 using Reneee.Application.DTOs.Order;
 using Reneee.Application.Exceptions;
 using Reneee.Domain.Entities;
+using System.Security.Claims;
 
 namespace Reneee.Application.Services.Impl
 {
@@ -16,6 +18,7 @@ namespace Reneee.Application.Services.Impl
                                   IProductRepository productRepository,
                                   IUnitOfWork unitOfWork,
                                   ILogger<OrderServiceImpl> logger,
+                                  IUserService userService,
                                   IMapper mapper) : IOrderService
     {
         private readonly IOrderRepository _orderRepository = orderRepository;
@@ -24,8 +27,10 @@ namespace Reneee.Application.Services.Impl
         private readonly IProductAttributeRepository _productAttributeRepository = productAttributeRepository;
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IProductRepository _productRepository = productRepository;
+        private readonly IUserService _userService = userService;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<OrderServiceImpl> _logger = logger;
+
         private readonly IMapper _mapper = mapper;
 
         public async Task<OrderDto> CancelOrder(int id)
@@ -81,7 +86,7 @@ namespace Reneee.Application.Services.Impl
                 using var transaction = await _unitOfWork.BeginTransactionAsync();
                 try
                 {
-                    var userEntity = await _userRepository.Get(1);
+                    var userEntity = await _userService.GetUserFromEmailClaims();
                     var foundPayment = await _paymentRepository.Get(orderRequest.PaymentId)
                                             ?? throw new NotFoundException($"Payment with id {orderRequest.PaymentId} not found");
                     var orderEntity = new Order

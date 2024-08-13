@@ -18,7 +18,7 @@ namespace Reneee.Infrastructure.Payment
         {
             var options = new PaymentIntentCreateOptions
             {
-                Amount = (long)(amount * 100), 
+                Amount = (long)(amount * 100),
                 Currency = currency,
                 PaymentMethodTypes = new List<string> { "card" },
             };

@@ -5,6 +5,8 @@ using Reneee.Application.Contracts.ThirdService;
 using Reneee.Infrastructure.Email;
 using Reneee.Infrastructure.GHN;
 using Reneee.Infrastructure.Payment;
+using Reneee.Infrastructure.Redis;
+using StackExchange.Redis;
 
 namespace Reneee.Infrastructure
 {
@@ -14,9 +16,15 @@ namespace Reneee.Infrastructure
         {
             services.Configure<StripeSettings>(configuration.GetSection("StripeSettings"));
             services.Configure<GhnSettings>(configuration.GetSection("GhnSettings"));
+            var redisSettings = configuration.GetSection("RedisSettings").Get<RedisSettings>();
+            services.AddSingleton(redisSettings);
+            services.AddSingleton<IConnectionMultiplexer>(sp =>
+                ConnectionMultiplexer.Connect(configuration.GetConnectionString("RedisConnection")));
+
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IStripePaymentService, StripePaymentService>();
             services.AddHttpClient<IGhnService, GhnApiService>();
+            services.AddScoped<ICacheService, RedisCacheService>();
 
             return services;
         }

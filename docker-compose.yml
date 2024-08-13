@@ -1,6 +1,4 @@
-﻿version: "3.8"
-
-services: 
+﻿services: 
   
   database:
     container_name: database
@@ -15,6 +13,14 @@ services:
     networks:
       - auth-sample-network
 
+  redis:
+    image: redis:latest
+    networks:
+      - auth-sample-network
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379" 
   # app:
   #   container_name: app
   #   build:
@@ -40,3 +46,4 @@ networks:
     
 volumes:
   database-volume:
+  redis-data:  

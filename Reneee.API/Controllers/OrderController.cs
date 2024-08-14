@@ -32,9 +32,9 @@ namespace Reneee.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetOrdersByUser()
+        public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetOrdersByUser([FromQuery] int status)
         {
-            return Ok(await _orderService.GetOrdersByUser());
+            return Ok(await _orderService.GetOrdersByUser(status));
         }
 
         [HttpPut("status/update")] 

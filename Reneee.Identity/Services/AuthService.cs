@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Reneee.Application.Contracts.Identity;
 using Reneee.Application.Contracts.Persistence;
+using Reneee.Application.Contracts.ThirdService;
 using Reneee.Application.DTOs.User;
 using Reneee.Application.Exceptions;
 using Reneee.Application.Models.Identity;
@@ -9,11 +10,16 @@ using Reneee.Domain.Entities;
 
 namespace Reneee.Identity.Services
 {
-    public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IUserRepository userRepository, IJwtTokenService jwtTokenService) : IAuthService
+    public class AuthService(IUnitOfWork unitOfWork,
+                             IMapper mapper,
+                             IUserRepository userRepository,
+                             ICacheService cacheService,
+                             IJwtTokenService jwtTokenService) : IAuthService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
         private readonly IUserRepository _userRepository = userRepository;
+        private readonly ICacheService _cacheService = cacheService;
         private readonly IJwtTokenService _jwtTokenService = jwtTokenService;
 
         public async Task<AuthResponse> Login(AuthRequest authRequest)
@@ -25,6 +31,7 @@ namespace Reneee.Identity.Services
             }
             string AccessToken = _jwtTokenService.GenerateAccessToken(_mapper.Map<UserDto>(foundUser));
             string RefreshToken = _jwtTokenService.GenerateRefreshToken();
+            await _cacheService.SetAsync(foundUser.Email, AccessToken, TimeSpan.FromHours(1));
             await _unitOfWork.SaveChangesAsync();
             return new AuthResponse(AccessToken, RefreshToken);
         }
@@ -45,7 +52,7 @@ namespace Reneee.Identity.Services
                 Gender = Enum.Parse<Gender>(registerRequest.Gender),
                 Dob = dob,
                 Role = Role.Customer,
-                Status = 1 
+                Status = 1
             };
             var savedUser = await _unitOfWork.UserRepository.Add(userEntity);
             await _unitOfWork.SaveChangesAsync();

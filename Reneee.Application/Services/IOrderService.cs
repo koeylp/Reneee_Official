@@ -8,7 +8,7 @@ namespace Reneee.Application.Services
         Task<OrderDto> CreateOrder(CreateOrderDto orderRequest);
         Task<IReadOnlyList<OrderDto>> GetAllOrders();
         Task<OrderDto> GetOrderById(int id);
-        Task<IReadOnlyList<OrderDto>> GetOrdersByUser();
+        Task<IReadOnlyList<OrderDto>> GetOrdersByUser(int status);
         Task<OrderDto> UpdateOrderStatus(int id, int status);
     }
 }

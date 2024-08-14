@@ -9,11 +9,18 @@ namespace Reneee.Persistence.Repositories
     {
         private readonly ApplicationDbContext _dbContext = dbContext;
 
-        public async Task<IReadOnlyList<Order>> GetOrderByUser(User user)
+        public async Task<IReadOnlyList<Order>> GetOrderByUserAndStatus(User user, int? status)
         {
-            return await _dbContext.Orders
-                .Where(c => c.User == user)
-                .ToListAsync();
+            var query = _dbContext.Orders.AsQueryable();
+
+            query = query.Where(c => c.User == user);
+
+            if (status != 100)
+            {
+                query = query.Where(c => c.Status == status.Value);
+            }
+
+            return await query.ToListAsync();
         }
     }
 }

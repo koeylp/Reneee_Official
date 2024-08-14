@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Reneee.Application.Contracts.Persistence;
+using Reneee.Application.Contracts.ThirdService;
 using Reneee.Application.DTOs.Order;
 using Reneee.Application.Exceptions;
 using Reneee.Domain.Entities;
@@ -19,6 +20,7 @@ namespace Reneee.Application.Services.Impl
                                   IUnitOfWork unitOfWork,
                                   ILogger<OrderServiceImpl> logger,
                                   IUserService userService,
+                                  ICacheService cacheService,
                                   IMapper mapper) : IOrderService
     {
         private readonly IOrderRepository _orderRepository = orderRepository;
@@ -30,7 +32,7 @@ namespace Reneee.Application.Services.Impl
         private readonly IUserService _userService = userService;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<OrderServiceImpl> _logger = logger;
-
+        private readonly ICacheService _cacheService = cacheService;
         private readonly IMapper _mapper = mapper;
 
         public async Task<OrderDto> CancelOrder(int id)
@@ -84,11 +86,24 @@ namespace Reneee.Application.Services.Impl
             return await strategy.ExecuteAsync(async () =>
             {
                 using var transaction = await _unitOfWork.BeginTransactionAsync();
+                //var userEntity = await _userService.GetUserFromEmailClaims();
+                var userEntity = await _userRepository.Get(1);
+                var lockKey = $"lock_order_{Guid.NewGuid()}_{userEntity.Id}";
+
+                var lockAcquired = await _cacheService.AcquireLockAsync(lockKey, TimeSpan.FromMinutes(1));
+
+                if (!lockAcquired)
+                {
+                    _logger.LogWarning("Failed to acquire lock for order creation.");
+                    throw new Exception("Could not acquire lock. Please try again later.");
+                }
+
                 try
                 {
-                    var userEntity = await _userService.GetUserFromEmailClaims();
+
                     var foundPayment = await _paymentRepository.Get(orderRequest.PaymentId)
                                             ?? throw new NotFoundException($"Payment with id {orderRequest.PaymentId} not found");
+
                     var orderEntity = new Order
                     {
                         Address = orderRequest.Address,
@@ -98,15 +113,25 @@ namespace Reneee.Application.Services.Impl
                         Payment = foundPayment,
                         Status = 0,
                     };
+
                     var savedOrder = await _orderRepository.Add(orderEntity);
                     var orderDetailsEntities = new List<OrderDetails>();
+
                     foreach (var item in orderRequest.createOrderDetails)
                     {
                         var productAttributeEntity = await _productAttributeRepository.Get(item.ProductAttributeId)
                                                     ?? throw new NotFoundException($"Product Attribute with id {item.ProductAttributeId} not found");
-                        if (productAttributeEntity.Stock <= 0) throw new BadRequestException($"{productAttributeEntity.Product.Name} got out of stock");
+
+                        if (productAttributeEntity.Stock <= 0)
+                        {
+                            throw new BadRequestException($"{productAttributeEntity.Product.Name} got out of stock");
+                        }
+
                         productAttributeEntity.Stock -= item.Quantity;
-                        if (productAttributeEntity.Stock == 0) productAttributeEntity.Status = -1;
+                        if (productAttributeEntity.Stock == 0)
+                        {
+                            productAttributeEntity.Status = -1;
+                        }
                         await _productAttributeRepository.Update(productAttributeEntity);
 
                         var productEntity = await _productRepository.Get(productAttributeEntity.ProductID);
@@ -123,9 +148,11 @@ namespace Reneee.Application.Services.Impl
                         };
                         orderDetailsEntities.Add(orderDetailsEntity);
                     }
+
                     await _orderDetailsRepository.AddRange(orderDetailsEntities);
                     await _unitOfWork.SaveChangesAsync();
                     await transaction.CommitAsync();
+
                     return _mapper.Map<OrderDto>(savedOrder);
                 }
                 catch (Exception ex)
@@ -134,8 +161,13 @@ namespace Reneee.Application.Services.Impl
                     await transaction.RollbackAsync();
                     throw;
                 }
+                finally
+                {
+                    await _cacheService.ReleaseLockAsync(lockKey);
+                }
             });
         }
+
 
         public async Task<IReadOnlyList<OrderDto>> GetAllOrders()
         {
@@ -151,13 +183,14 @@ namespace Reneee.Application.Services.Impl
             return _mapper.Map<OrderDto>(orderEntity);
         }
 
-        public async Task<IReadOnlyList<OrderDto>> GetOrdersByUser()
+        public async Task<IReadOnlyList<OrderDto>> GetOrdersByUser(int status)
         {
+            //var userEntity = await _userService.GetUserFromEmailClaims();
             var user = await _userRepository.Get(1)
                             ?? throw new NotFoundException("User not found");
-            var orderEntities = await _orderRepository.GetOrderByUser(user);
+            var orderEntities = await _orderRepository.GetOrderByUserAndStatus(user, status);
             var orderDtos = _mapper.Map<List<OrderDto>>(orderEntities);
-            var sortedOrders = orderDtos.OrderBy(order => order.OrderDate).ToList();
+            var sortedOrders = orderDtos.OrderByDescending(order => order.OrderDate).ToList();
             return sortedOrders.AsReadOnly();
         }
 

@@ -7,7 +7,8 @@ namespace Reneee.Application.DTOs.Transaction
     {
         public int Id { get; set; }
         public decimal Total { get; set; }
-        public DateTime TransactionDate { get; set; }
+        public string TransactionDate { get; set; }
+        public string ClientSecret { get; set; }
         public int Status { get; set; }
         public UserDto User { get; set; }
         public OrderDto Order { get; set; }

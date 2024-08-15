@@ -198,6 +198,7 @@ namespace Reneee.Application.Services.Impl
         {
             var orderEntity = await GetOrder(id);
             orderEntity.Status = status;
+            orderEntity.OrderDate = DateTime.Now;
             await _orderRepository.Update(orderEntity);
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<OrderDto>(orderEntity);

@@ -66,7 +66,7 @@ namespace Reneee.API.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<ActionResult<IReadOnlyList<ProductDto>>> SearchProduct([FromQuery] string search)
+        public async Task<ActionResult<IReadOnlyList<ProductDto>>> SearchProduct([FromQuery] string? search)
         {
             return Ok(await _productService.SearchProduct(search));
         }
@@ -76,5 +76,7 @@ namespace Reneee.API.Controllers
         {
             return Ok(await _productService.UpdateProduct(id, productRequest));
         }
+
+
     }
 }

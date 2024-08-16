@@ -20,8 +20,9 @@ namespace Reneee.Infrastructure
             services.AddSingleton(redisSettings);
             services.AddSingleton<IConnectionMultiplexer>(sp =>
                 ConnectionMultiplexer.Connect(configuration.GetConnectionString("RedisConnection")));
+            services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
 
-            services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IMailService, MailService>();
             services.AddTransient<IStripePaymentService, StripePaymentService>();
             services.AddHttpClient<IGhnService, GhnApiService>();
             services.AddScoped<ICacheService, RedisCacheService>();

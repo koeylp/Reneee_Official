@@ -23,6 +23,7 @@ namespace Reneee.Persistence.Repositories
         private IUserRepository? _userRepository;
         private IDbContextTransaction _currentTransaction;
         private ICommentRepository? _commentRepository;
+        private IResetPasswordRepository? _resetPasswordRepository;
 
 
         public IAttributeRepository AttributeRepository =>
@@ -54,6 +55,8 @@ namespace Reneee.Persistence.Repositories
         public ICommentRepository CommentRepository =>
             _commentRepository ??= new CommentRepository(_context);
 
+        public IResetPasswordRepository ResetPasswordRepository =>
+            _resetPasswordRepository ??= new ResetPasswordRepository(_context);
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {

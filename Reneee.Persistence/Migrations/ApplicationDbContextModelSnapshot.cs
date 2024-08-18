@@ -402,6 +402,28 @@ namespace Reneee.Persistence.Migrations
                     b.ToTable("Promotions");
                 });
 
+            modelBuilder.Entity("Reneee.Domain.Entities.ResetPassword", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("ntext");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ResetPasswords");
+                });
+
             modelBuilder.Entity("Reneee.Domain.Entities.Transaction", b =>
                 {
                     b.Property<int>("Id")
@@ -607,6 +629,17 @@ namespace Reneee.Persistence.Migrations
                     b.Navigation("ProductAttribute");
 
                     b.Navigation("Promotion");
+                });
+
+            modelBuilder.Entity("Reneee.Domain.Entities.ResetPassword", b =>
+                {
+                    b.HasOne("Reneee.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Reneee.Domain.Entities.Transaction", b =>

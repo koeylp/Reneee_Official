@@ -47,5 +47,38 @@ namespace Reneee.Infrastructure.Email
                 return false;
             }
         }
+
+        public async Task<bool> SendPasswordResetEmail(string recipientEmail, string resetLink, string name)
+        {
+            try
+            {
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress(_mailSettings.SenderName, _mailSettings.SenderEmail));
+                message.To.Add(new MailboxAddress(name, recipientEmail));
+                message.Subject = "Password Reset Request";
+                var bodyBuilder = new BodyBuilder
+                {
+                    HtmlBody = $@"
+                <h2>Password Reset</h2>
+                <p>You requested to reset your password. Click the link below to reset it:</p>
+                <a href='{resetLink}'>Reset Password</a>
+                <p>If you did not request a password reset, please ignore this email.</p>"
+                };
+
+                message.Body = bodyBuilder.ToMessageBody();
+
+                using var client = new SmtpClient();
+                await client.ConnectAsync(_mailSettings.Server, _mailSettings.Port, MailKit.Security.SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(_mailSettings.UserName, _mailSettings.Password);
+                await client.SendAsync(message);
+                await client.DisconnectAsync(true);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return false;
+            }
+        }
     }
 }

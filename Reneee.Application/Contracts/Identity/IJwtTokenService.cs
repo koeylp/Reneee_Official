@@ -6,5 +6,6 @@ namespace Reneee.Application.Contracts.Identity
     {
         string GenerateAccessToken(UserDto user);
         string GenerateRefreshToken();
+        string GenerateResetPasswordToken(UserDto user);
     }
 }

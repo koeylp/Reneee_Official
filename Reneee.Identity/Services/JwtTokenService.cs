@@ -24,7 +24,7 @@ namespace Reneee.Identity.Services
             };
             var _privateKey = RSAKeyUtils.GetPrivateKey(_jwtSettings.PrivateKeyPath);
             var credentials = new SigningCredentials(new RsaSecurityKey(_privateKey), SecurityAlgorithms.RsaSha256);
-             
+
             var token = new JwtSecurityToken(
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
@@ -39,6 +39,28 @@ namespace Reneee.Identity.Services
         public string GenerateRefreshToken()
         {
             return Guid.NewGuid().ToString();
+        }
+
+        public string GenerateResetPasswordToken(UserDto user)
+        {
+            var claims = new List<Claim>
+            {
+                new(JwtRegisteredClaimNames.Email, user.Email),
+                new(ClaimTypes.Role, user.Role),
+                new(JwtRegisteredClaimNames.Sub, user.FirstName)
+            };
+            var _privateKey = RSAKeyUtils.GetPrivateKey(_jwtSettings.PrivateKeyPath);
+            var credentials = new SigningCredentials(new RsaSecurityKey(_privateKey), SecurityAlgorithms.RsaSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(3),
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

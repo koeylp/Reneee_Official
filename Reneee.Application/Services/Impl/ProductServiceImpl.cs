@@ -78,7 +78,7 @@ namespace Reneee.Application.Services.Impl
 
                     foreach (var item in attributeValueInput)
                     {
-                        var attributeValueEntity = await _attributeValueRepository.Get(item.attibuteValueId)
+                        var attributeValueEntity = await _attributeValueRepository.Get(item.attributeValueId)
                             ?? throw new NotFoundException("Attribute value not found when creating product attribute");
                         if (item.stock < 0)
                         {
@@ -243,8 +243,8 @@ namespace Reneee.Application.Services.Impl
 
                         foreach (var item in productRequest.ProductAttributeValues)
                         {
-                            var attributeValueEntity = await _attributeValueRepository.Get(item.attibuteValueId)
-                                ?? throw new NotFoundException("Attribute value not found with id " + item.attibuteValueId);
+                            var attributeValueEntity = await _attributeValueRepository.Get(item.attributeValueId)
+                                ?? throw new NotFoundException("Attribute value not found with id " + item.attributeValueId);
 
                             var productAttributeEntity = new ProductAttribute
                             {

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Reneee.Application.Contracts.Persistence;
 using Reneee.Application.DTOs.Product;
+using Reneee.Application.DTOs.ProductAttribute;
 using Reneee.Application.Exceptions;
 using Reneee.Domain.Entities;
 using System.Collections.Generic;
@@ -179,6 +180,12 @@ namespace Reneee.Application.Services.Impl
         {
             var productList = await _productPromotionRepository.GetProductByPromotionId(id);
             return _mapper.Map<IReadOnlyList<ProductDto>>(productList);
+        }
+
+        public async Task<IReadOnlyList<ProductAttributeInfoDto>> GetProductAttributes()
+        {
+            var productAttributes = await _productAttributeRepository.GetAll();
+            return _mapper.Map<IReadOnlyList<ProductAttributeInfoDto>>(productAttributes);
         }
 
         public async Task<ProductDto> GetProductById(int id)

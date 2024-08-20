@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Reneee.Application.DTOs.Product;
+using Reneee.Application.DTOs.ProductAttribute;
 using Reneee.Application.Services;
 
 namespace Reneee.API.Controllers
@@ -77,6 +78,10 @@ namespace Reneee.API.Controllers
             return Ok(await _productService.UpdateProduct(id, productRequest));
         }
 
-
+        [HttpGet("attribute")]
+        public async Task<ActionResult<IReadOnlyList<ProductAttributeInfoDto>>> GetProductAttributes()
+        {
+            return Ok(await _productService.GetProductAttributes());
+        }
     }
 }

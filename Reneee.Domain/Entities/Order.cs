@@ -13,6 +13,7 @@ namespace Reneee.Domain.Entities
         public string Address { get; set; }
         [Required]
         public DateTime OrderDate { get; set; }
+        public DateTime UpdatedAt { get; set; }
         [Required]
         public decimal Total { get; set; }
         public int Status { get; set; }

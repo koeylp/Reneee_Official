@@ -48,6 +48,7 @@ namespace Reneee.Application.Services.Impl
                 {
                     var orderEntity = await GetOrder(id);
                     orderEntity.Status = -1;
+                    orderEntity.UpdatedAt = DateTime.Now;
 
                     var orderDetails = await _orderDetailsRepository.GetOrderDetailsByOrderId(id);
                     foreach (var item in orderDetails)
@@ -108,6 +109,7 @@ namespace Reneee.Application.Services.Impl
                     {
                         Address = orderRequest.Address,
                         OrderDate = DateTime.Now,
+                        UpdatedAt = DateTime.Now,
                         Total = orderRequest.Total,
                         User = userEntity,
                         Payment = foundPayment,
@@ -173,7 +175,7 @@ namespace Reneee.Application.Services.Impl
         {
             IReadOnlyList<Order> orderEntities = await _orderRepository.GetAll();
             var orderDtos = _mapper.Map<List<OrderDto>>(orderEntities);
-            var sortedOrders = orderDtos.OrderBy(order => order.OrderDate).ToList();
+            var sortedOrders = orderDtos.OrderByDescending(order => order.UpdatedAt).ToList();
             return sortedOrders.AsReadOnly();
         }
 
@@ -198,7 +200,7 @@ namespace Reneee.Application.Services.Impl
         {
             var orderEntity = await GetOrder(id);
             orderEntity.Status = status;
-            orderEntity.OrderDate = DateTime.Now;
+            orderEntity.UpdatedAt = DateTime.Now;
             await _orderRepository.Update(orderEntity);
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<OrderDto>(orderEntity);

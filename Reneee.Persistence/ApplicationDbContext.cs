@@ -88,6 +88,12 @@ namespace Reneee.Persistence
                     .HasPrecision(18, 2);
 
             });
+
+            modelBuilder.Entity<Sale>(entity =>
+            {
+                entity.Property(e => e.Price)
+                .HasPrecision(18, 2);
+            });
         }
     }
 }

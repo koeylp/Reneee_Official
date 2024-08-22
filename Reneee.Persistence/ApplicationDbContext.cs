@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Reneee.Domain.Entities;
+using Reneee.Persistence;
 using Attribute = Reneee.Domain.Entities.Attribute;
 
 namespace Reneee.Persistence
@@ -97,5 +99,15 @@ namespace Reneee.Persistence
                 //entity<Sales
             });
         }
+    }
+}
+
+public class ApplicationContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
+{
+    public ApplicationDbContext CreateDbContext(string[] args)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+        optionsBuilder.UseSqlServer("Data Source=127.0.0.1, 1434;Initial Catalog=eskimo-development;User ID=sa;Password=password");
+        return new ApplicationDbContext(optionsBuilder.Options);
     }
 }

@@ -101,13 +101,3 @@ namespace Reneee.Persistence
         }
     }
 }
-
-public class ApplicationContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
-{
-    public ApplicationDbContext CreateDbContext(string[] args)
-    {
-        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-        optionsBuilder.UseSqlServer("Data Source=127.0.0.1, 1434;Initial Catalog=eskimo-development;User ID=sa;Password=password");
-        return new ApplicationDbContext(optionsBuilder.Options);
-    }
-}

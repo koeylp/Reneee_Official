@@ -2,7 +2,7 @@
 
 namespace Reneee.Domain.Entities
 {
-    public class User 
+    public class User
     {
         public int Id { get; set; }
         [Required]
@@ -17,6 +17,7 @@ namespace Reneee.Domain.Entities
         public Role Role { get; set; }
         [Required]
         public DateOnly Dob { get; set; }
+        public DateTime CreatedAt { get; set; }
         public int Status { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using Reneee.Application.DTOs.Promotion;
 using Reneee.Application.Exceptions;
 using Reneee.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Reneee.Application.DTOs.ProductPromotion;
 
 namespace Reneee.Application.Services.Impl
 {
@@ -48,6 +49,7 @@ namespace Reneee.Application.Services.Impl
                         DiscountValue = promotionRequest.DiscountValue,
                         StartDate = DateTime.Parse(promotionRequest.StartDate),
                         EndDate = DateTime.Parse(promotionRequest.EndDate),
+                        UpdatedAt = DateTime.Now
                     };
                     _logger.LogInformation(DateTime.Parse(promotionRequest.StartDate).ToString());
 
@@ -70,7 +72,7 @@ namespace Reneee.Application.Services.Impl
                             {
                                 ProductAttribute = foundProductAttribute,
                                 Promotion = promotionEntity,
-                                Status = 1
+                                Status = 0
                             };
                             productPromotionEntities.Add(productPromotionEntity);
                         }
@@ -115,13 +117,22 @@ namespace Reneee.Application.Services.Impl
         public async Task<IReadOnlyList<PromotionDto>> GetAllPromotions()
         {
             _logger.LogInformation("Fetching all Promotions");
-            return _mapper.Map<IReadOnlyList<PromotionDto>>(await _promotionRepository.GetAll());
+            IReadOnlyList<Promotion> promotions = await _promotionRepository.GetAll();
+            var promotionDtos = _mapper.Map<List<PromotionDto>>(promotions);
+            var sortedPromotions = promotionDtos.OrderByDescending(p => p.UpdatedAt).ToList();
+            return sortedPromotions.AsReadOnly();
         }
 
         public async Task<PromotionDto> GetPromotionById(int id)
         {
             _logger.LogInformation($"Entering method get promotion by id {id}");
             return _mapper.Map<PromotionDto>(await _promotionRepository.Get(id));
+        }
+
+        public async Task<IReadOnlyList<ProductPromotionDto>> GetActiveProductPromotions()
+        {
+            var activeProductPromotions = await _productPromotionRepository.GetProductPromotionsByStatus(1);
+            return _mapper.Map<IReadOnlyList<ProductPromotionDto>>(activeProductPromotions);
         }
     }
 }

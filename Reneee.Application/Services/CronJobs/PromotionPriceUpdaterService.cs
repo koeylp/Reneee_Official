@@ -86,6 +86,7 @@ namespace Reneee.Application.Services.CronJobs
                     await productAttributeRepository.Update(productAttribute);
 
                     productPromotion.Status = INACTIVE_STATUS;
+                    await productPromotionRepository.Update(productPromotion);
                     var products = await productPromotionRepository.GetProductByPromotionId(promotion.Id);
                     foreach (var product in products)
                     {
@@ -111,6 +112,7 @@ namespace Reneee.Application.Services.CronJobs
             foreach (var promotion in promotions)
             {
                 promotion.Status = ACTIVE_STATUS;
+                promotion.UpdatedAt = DateTime.Now;
                 await promotionRepository.Update(promotion);
 
                 var productPromotions = await productPromotionRepository.GetByPromotionId(promotion.Id);
@@ -126,6 +128,7 @@ namespace Reneee.Application.Services.CronJobs
                     await productAttributeRepository.Update(productAttribute);
 
                     productPromotion.Status = ACTIVE_STATUS;
+                    await productPromotionRepository.Update(productPromotion);
                     var products = await productPromotionRepository.GetProductByPromotionId(promotion.Id);
                     foreach (var product in products)
                     {

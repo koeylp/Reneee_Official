@@ -20,6 +20,7 @@ namespace Reneee.Application.Contracts.Persistence
         IExecutionStrategy CreateExecutionStrategy();
         ICommentRepository CommentRepository { get; }
         IResetPasswordRepository ResetPasswordRepository { get; }
+        ISalesRepository SalesRepository { get; }
         Task<IDbContextTransaction> BeginTransactionAsync();
         Task SaveChangesAsync();
     }

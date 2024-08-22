@@ -51,6 +51,7 @@ namespace Reneee.Persistence
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IResetPasswordRepository, ResetPasswordRepository>();
+            services.AddScoped<ISalesRepository, SalesRepository>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

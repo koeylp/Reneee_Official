@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Reneee.Application.Constants;
 using Reneee.Application.DTOs.Category;
 using Reneee.Application.Services;
 using Swashbuckle.AspNetCore.Annotations;
@@ -12,7 +14,7 @@ namespace Reneee.API.Controllers
         private readonly ICategoryService _categoryService = categoryService;
 
         [HttpPost]
-        //[Authorize(Roles = RoleConstants.ROLE_STAFF)]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<CategoryDto>> CreateCategory([FromBody] CreateCategoryDto categoryRequest)
@@ -34,7 +36,7 @@ namespace Reneee.API.Controllers
         }
 
         [HttpPut("enable/{id}")]
-        //[Authorize(Roles = RoleConstants.ROLE_STAFF)]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerOperation(

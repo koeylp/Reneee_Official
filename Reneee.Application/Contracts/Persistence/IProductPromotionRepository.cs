@@ -8,5 +8,6 @@ namespace Reneee.Application.Contracts.Persistence
         Task<IReadOnlyList<ProductPromotion>> GetByPromotionId(int promotionId);
         Task<IReadOnlyList<Product>> GetProductByPromotionId(int promotionId);
         Task AddRange(IEnumerable<ProductPromotion> entities);
+        Task<IReadOnlyList<ProductPromotion>> GetProductPromotionsByStatus(int status);
     }
 }

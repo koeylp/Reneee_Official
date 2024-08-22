@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Reneee.Application.DTOs.ProductPromotion;
 using Reneee.Application.DTOs.Promotion;
 using Reneee.Application.Services;
 
@@ -40,6 +41,10 @@ namespace Reneee.API.Controllers
             return Ok(await _promotionService.DeletePromotion(id));
         }
 
-        
+        [HttpGet("product/active")]
+        public async Task<ActionResult<IReadOnlyList<ProductPromotionDto>>> GetActiveProductPromotions()
+        {
+            return Ok(await _promotionService.GetActiveProductPromotions());
+        }
     }
 }

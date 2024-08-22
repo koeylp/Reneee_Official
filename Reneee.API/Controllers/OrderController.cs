@@ -32,18 +32,20 @@ namespace Reneee.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = RoleConstants.ROLE_CUSTOMER)]
         public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetOrdersByUser([FromQuery] int status)
         {
             return Ok(await _orderService.GetOrdersByUser(status));
         }
 
-        [HttpPut("status/update")] 
+        [HttpPut("status/update")]
         public async Task<ActionResult<OrderDto>> UpdateOrderStatus([FromQuery] int id, int status)
         {
             return Ok(await _orderService.UpdateOrderStatus(id, status));
         }
 
         [HttpPut("cancel/{id}")]
+        [Authorize(Roles = RoleConstants.ROLE_CUSTOMER)]
         public async Task<ActionResult<OrderDto>> CancelOrder([FromRoute] int id)
         {
             return Ok(await _orderService.CancelOrder(id));

@@ -23,6 +23,7 @@ namespace Reneee.Application
             services.AddScoped<IUserService, UserServiceImpl>();
             services.AddScoped<IAttributeValueService, AttributeValueServiceImpl>();
             services.AddHostedService<PromotionPriceUpdaterService>();
+            services.AddScoped<ISalesService, SalesServiceImpl>();
 
             return services;
         }

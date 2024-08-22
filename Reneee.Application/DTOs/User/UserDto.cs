@@ -9,6 +9,7 @@
         public string? Gender { get; set; }
         public string? Role { get; set; }
         public DateOnly Dob { get; set; }
+        public DateTime CreatedAt { get; set; }
         public int Status { get; set; }
     }
 }

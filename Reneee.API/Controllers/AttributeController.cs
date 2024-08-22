@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Reneee.Application.Constants;
 using Reneee.Application.DTOs.Attribute;
 using Reneee.Application.Services;
 
@@ -11,6 +13,7 @@ namespace Reneee.API.Controllers
         private readonly IAttributeService _attributeService = attributeService;
 
         [HttpPost]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         public async Task<ActionResult<AttributeDto>> CreateAttribute([FromBody] CreateUpdateAttributeDto attributeRequest)
         {
             return Ok(await _attributeService.CreateAttribute(attributeRequest));

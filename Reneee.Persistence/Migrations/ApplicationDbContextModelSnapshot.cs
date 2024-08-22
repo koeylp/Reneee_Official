@@ -400,6 +400,9 @@ namespace Reneee.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.ToTable("Promotions");
@@ -425,6 +428,37 @@ namespace Reneee.Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ResetPasswords");
+                });
+
+            modelBuilder.Entity("Reneee.Domain.Entities.Sales", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductAttributeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SalesDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalSales")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("UnitsSold")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductAttributeId");
+
+                    b.ToTable("Sales");
                 });
 
             modelBuilder.Entity("Reneee.Domain.Entities.Transaction", b =>
@@ -471,6 +505,9 @@ namespace Reneee.Persistence.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateOnly>("Dob")
                         .HasColumnType("date");
@@ -643,6 +680,17 @@ namespace Reneee.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Reneee.Domain.Entities.Sales", b =>
+                {
+                    b.HasOne("Reneee.Domain.Entities.ProductAttribute", "ProductAttribute")
+                        .WithMany()
+                        .HasForeignKey("ProductAttributeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductAttribute");
                 });
 
             modelBuilder.Entity("Reneee.Domain.Entities.Transaction", b =>

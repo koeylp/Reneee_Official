@@ -21,6 +21,7 @@ namespace Reneee.Persistence
         public DbSet<User> Users { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ResetPassword> ResetPasswords { get; set; }
+        public DbSet<Sales> Sales { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -89,10 +90,11 @@ namespace Reneee.Persistence
 
             });
 
-            modelBuilder.Entity<Sale>(entity =>
+            modelBuilder.Entity<Sales>(entity =>
             {
-                entity.Property(e => e.Price)
+                entity.Property(e => e.TotalSales)
                 .HasPrecision(18, 2);
+                //entity<Sales
             });
         }
     }

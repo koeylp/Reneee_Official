@@ -22,7 +22,7 @@ namespace Reneee.Persistence.Repositories
         public async Task<IReadOnlyList<ProductPromotion>> GetByPromotionId(int promotionId)
         {
             return await _dbContext.ProductPromotions
-                        .Where(predicate => predicate.Id == promotionId)
+                        .Where(predicate => predicate.PromotionId == promotionId)
                         .ToListAsync();
         }
 
@@ -38,6 +38,13 @@ namespace Reneee.Persistence.Repositories
                 .Include(p => p.ProductAttributes)
                 .ThenInclude(pa => pa.AttributeValue)
                 .ToListAsync();
+        }
+
+        public async Task<IReadOnlyList<ProductPromotion>> GetProductPromotionsByStatus(int status)
+        {
+            return await _dbContext.ProductPromotions
+                         .Where(predicate => predicate.Status == status)
+                         .ToListAsync();
         }
     }
 }

@@ -33,8 +33,8 @@ namespace Reneee.Application.Services.Impl
 
         public async Task<IReadOnlyList<TransactionDto>> GetTransactions()
         {
-            var userEntity = await _userService.GetUserFromEmailClaims();
-            var transactions = _mapper.Map<List<TransactionDto>>(await _transactionRepository.GetTransactionByUser(userEntity));
+            //var userEntity = await _userService.GetUserFromEmailClaims();
+            var transactions = _mapper.Map<List<TransactionDto>>(await _transactionRepository.GetAll());
             var sortedTransactions = transactions.OrderByDescending(t => t.TransactionDate).ToList();
             return sortedTransactions.AsReadOnly();
         }

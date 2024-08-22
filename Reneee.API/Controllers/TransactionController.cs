@@ -20,7 +20,7 @@ namespace Reneee.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = RoleConstants.ROLE_CUSTOMER)]
+        //[Authorize(Roles = RoleConstants.ROLE_CUSTOMER)]
         public async Task<ActionResult<IReadOnlyList<TransactionDto>>> GetTransactions()
         {
             return Ok(await _transactionService.GetTransactions());

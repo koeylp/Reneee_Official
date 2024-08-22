@@ -1,4 +1,5 @@
-﻿using Reneee.Application.DTOs.Promotion;
+﻿using Reneee.Application.DTOs.ProductPromotion;
+using Reneee.Application.DTOs.Promotion;
 
 namespace Reneee.Application.Services
 {
@@ -8,6 +9,7 @@ namespace Reneee.Application.Services
         Task<string> DeletePromotion(int id);
         Task<PromotionDto> DisablePromotion(int id);
         Task<IReadOnlyList<PromotionDto>> GetAllPromotions();
+        Task<IReadOnlyList<ProductPromotionDto>> GetActiveProductPromotions();
         Task<PromotionDto> GetPromotionById(int id);
     }   
 }

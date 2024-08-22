@@ -22,5 +22,10 @@ namespace Reneee.Persistence.Repositories
 
             return await query.ToListAsync();
         }
+
+        public async Task<int> GetTotalOrders()
+        {
+            return await _dbContext.Orders.CountAsync();
+        }
     }
 }

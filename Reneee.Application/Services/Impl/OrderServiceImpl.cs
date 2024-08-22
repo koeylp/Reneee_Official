@@ -21,6 +21,7 @@ namespace Reneee.Application.Services.Impl
                                   ILogger<OrderServiceImpl> logger,
                                   IUserService userService,
                                   ICacheService cacheService,
+                                  ISalesRepository salesRepository,
                                   IMapper mapper) : IOrderService
     {
         private readonly IOrderRepository _orderRepository = orderRepository;
@@ -33,6 +34,7 @@ namespace Reneee.Application.Services.Impl
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ILogger<OrderServiceImpl> _logger = logger;
         private readonly ICacheService _cacheService = cacheService;
+        private readonly ISalesRepository _salesRepository = salesRepository;
         private readonly IMapper _mapper = mapper;
 
         public async Task<OrderDto> CancelOrder(int id)
@@ -56,6 +58,7 @@ namespace Reneee.Application.Services.Impl
                         var productAttributeEntity = await _productAttributeRepository.Get(item.ProductAttribute.Id);
                         productAttributeEntity.Stock += item.Quantity;
                         await _productAttributeRepository.Update(productAttributeEntity);
+                        await _salesRepository.DeleteSalesByProductAttribute(productAttributeEntity);
 
                         var productEntity = await _productRepository.Get(item.ProductAttribute.ProductID);
                         productEntity.TotalQuantity += item.Quantity;
@@ -87,8 +90,8 @@ namespace Reneee.Application.Services.Impl
             return await strategy.ExecuteAsync(async () =>
             {
                 using var transaction = await _unitOfWork.BeginTransactionAsync();
-                //var userEntity = await _userService.GetUserFromEmailClaims();
-                var userEntity = await _userRepository.Get(1);
+                var userEntity = await _userService.GetUserFromEmailClaims();
+                //var userEntity = await _userRepository.Get(1);
                 var lockKey = $"lock_order_{Guid.NewGuid()}_{userEntity.Id}";
 
                 var lockAcquired = await _cacheService.AcquireLockAsync(lockKey, TimeSpan.FromMinutes(1));
@@ -124,6 +127,16 @@ namespace Reneee.Application.Services.Impl
                         var productAttributeEntity = await _productAttributeRepository.Get(item.ProductAttributeId)
                                                     ?? throw new NotFoundException($"Product Attribute with id {item.ProductAttributeId} not found");
 
+                        var sales = new Sales
+                        {
+                            ProductAttribute = productAttributeEntity,
+                            SalesDate = DateTime.Now,
+                            Status = 1,
+                            TotalSales = item.Price * item.Quantity,
+                            UnitsSold = item.Quantity
+                        };
+                        await _salesRepository.Add(sales);
+
                         if (productAttributeEntity.Stock <= 0)
                         {
                             throw new BadRequestException($"{productAttributeEntity.Product.Name} got out of stock");
@@ -150,6 +163,8 @@ namespace Reneee.Application.Services.Impl
                         };
                         orderDetailsEntities.Add(orderDetailsEntity);
                     }
+
+
 
                     await _orderDetailsRepository.AddRange(orderDetailsEntities);
                     await _unitOfWork.SaveChangesAsync();
@@ -187,10 +202,10 @@ namespace Reneee.Application.Services.Impl
 
         public async Task<IReadOnlyList<OrderDto>> GetOrdersByUser(int status)
         {
-            //var userEntity = await _userService.GetUserFromEmailClaims();
-            var user = await _userRepository.Get(1)
-                            ?? throw new NotFoundException("User not found");
-            var orderEntities = await _orderRepository.GetOrderByUserAndStatus(user, status);
+            var userEntity = await _userService.GetUserFromEmailClaims();
+            //var user = await _userRepository.Get(1)
+            //                ?? throw new NotFoundException("User not found");
+            var orderEntities = await _orderRepository.GetOrderByUserAndStatus(userEntity, status);
             var orderDtos = _mapper.Map<List<OrderDto>>(orderEntities);
             var sortedOrders = orderDtos.OrderByDescending(order => order.OrderDate).ToList();
             return sortedOrders.AsReadOnly();

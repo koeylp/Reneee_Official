@@ -20,18 +20,21 @@ namespace Reneee.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         public async Task<ActionResult<IReadOnlyList<AttributeDto>>> GetAllAttributes()
         {
             return Ok(await _attributeService.GetAllAttributes());
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         public async Task<ActionResult<string>> DeleteAttribute(int id)
         {
             return Ok(await _attributeService.DeleteAttribute(id));
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         public async Task<ActionResult<AttributeDto>> UpdateAttibute([FromRoute] int id, [FromBody] CreateUpdateAttributeDto attributeRequest)
         {
             return Ok(await _attributeService.UpdateAttibute(id, attributeRequest));

@@ -42,7 +42,7 @@ namespace Reneee.Identity
                             options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
                             options.AddPolicy("ManagerPolicy", policy => policy.RequireRole("Manager"));
                         });*/
-            
+
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();

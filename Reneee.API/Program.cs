@@ -4,6 +4,7 @@ using Reneee.Application;
 using Reneee.Identity;
 using Reneee.Infrastructure;
 using Reneee.Persistence;
+using Stripe;
 
 namespace Reneee.API
 {
@@ -35,6 +36,7 @@ namespace Reneee.API
                                .AllowAnyHeader();
                     });
             });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
@@ -82,13 +84,13 @@ namespace Reneee.API
 
 
             var app = builder.Build();
-
+            app.UseSwagger();
+            app.UseSwaggerUI();
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            //if (app.Environment.IsDevelopment())
+            //{
+
+            //}
 
             app.UseCors("AllowAllHeaders");
             app.UseMiddleware<ExceptionMiddleware>();

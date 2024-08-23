@@ -20,12 +20,14 @@ namespace Reneee.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF + "," + RoleConstants.ROLE_CUSTOMER)]
         public async Task<ActionResult<OrderDto>> GetOrderById([FromRoute] int id)
         {
             return Ok(await _orderService.GetOrderById(id));
         }
 
         [HttpGet("staff")]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetAllOrders()
         {
             return Ok(await _orderService.GetAllOrders());
@@ -39,6 +41,7 @@ namespace Reneee.API.Controllers
         }
 
         [HttpPut("status/update")]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         public async Task<ActionResult<OrderDto>> UpdateOrderStatus([FromQuery] int id, int status)
         {
             return Ok(await _orderService.UpdateOrderStatus(id, status));

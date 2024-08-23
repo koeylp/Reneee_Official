@@ -23,7 +23,7 @@ namespace Reneee.API.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = RoleConstants.ROLE_STAFF)]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetAllCategories()
         {
             return Ok(await _categoryService.GetAllCategories());
@@ -49,12 +49,14 @@ namespace Reneee.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         public async Task<ActionResult<string>> DeleteCategory([FromRoute] int id)
         {
             return Ok(await _categoryService.DeleteCategory(id));
         }
 
         [HttpPut("disable/{id}")]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         public async Task<ActionResult<CategoryDto>> DisableCategory([FromRoute] int id)
         {
             return Ok(await _categoryService.DisableCategory(id));
@@ -62,6 +64,7 @@ namespace Reneee.API.Controllers
 
 
         [HttpPut("{id}")]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         public async Task<ActionResult<CategoryDto>> UpdateCategory([FromRoute] int id, [FromBody] CreateCategoryDto categoryRequest)
         {
             return Ok(await _categoryService.UpdateCategory(id, categoryRequest));

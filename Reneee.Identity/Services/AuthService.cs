@@ -52,7 +52,8 @@ namespace Reneee.Identity.Services
                 Gender = Enum.Parse<Gender>(registerRequest.Gender),
                 Dob = dob,
                 Role = Role.Customer,
-                Status = 1
+                Status = 1,
+                CreatedAt = DateTime.Now,
             };
             var savedUser = await _unitOfWork.UserRepository.Add(userEntity);
             await _unitOfWork.SaveChangesAsync();

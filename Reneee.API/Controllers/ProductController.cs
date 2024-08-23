@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Reneee.Application.Constants;
 using Reneee.Application.DTOs.Product;
 using Reneee.Application.DTOs.ProductAttribute;
 using Reneee.Application.Services;
@@ -12,7 +14,7 @@ namespace Reneee.API.Controllers
         private readonly IProductService _productService = productService;
 
         [HttpPost]
-        //[Authorize(Roles = RoleConstants.ROLE_STAFF)]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status201Created)]
         public async Task<ActionResult<ProductDto>> CreateProduct([FromBody] CreateProductDto productRequest)
         {
@@ -45,6 +47,7 @@ namespace Reneee.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         public async Task<ActionResult<string>> DeleteProduct([FromRoute] int id)
         {
             return Ok(await _productService.DeleteProduct(id));
@@ -73,6 +76,7 @@ namespace Reneee.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         public async Task<ActionResult<ProductDto>> UpdateProduct([FromRoute] int id, [FromBody] CreateProductDto productRequest)
         {
             return Ok(await _productService.UpdateProduct(id, productRequest));

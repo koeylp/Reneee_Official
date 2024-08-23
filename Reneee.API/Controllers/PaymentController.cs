@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Reneee.Application.Constants;
 using Reneee.Application.Contracts.ThirdService;
 using Reneee.Application.DTOs.Payment;
 using Reneee.Application.Services;
@@ -14,6 +16,7 @@ namespace Reneee.API.Controllers
         private readonly IStripePaymentService _stripePaymentService = stripePaymentService;
 
         [HttpPost]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         public async Task<ActionResult<PaymentDto>> CreatePayment([FromBody] CreatePaymentDto paymentRequest)
         {
             return Ok(await _paymentService.CreatePayment(paymentRequest));
@@ -26,6 +29,7 @@ namespace Reneee.API.Controllers
         }
 
         [HttpDelete("id")]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
         public async Task<ActionResult<string>> DeletePaymentMethod(int id)
         {
             return Ok(await _paymentService.DeletePaymentMethod(id));

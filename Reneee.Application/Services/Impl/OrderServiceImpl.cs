@@ -22,6 +22,7 @@ namespace Reneee.Application.Services.Impl
                                   IUserService userService,
                                   ICacheService cacheService,
                                   ISalesRepository salesRepository,
+                                  IMailService mailService,
                                   IMapper mapper) : IOrderService
     {
         private readonly IOrderRepository _orderRepository = orderRepository;
@@ -35,6 +36,7 @@ namespace Reneee.Application.Services.Impl
         private readonly ILogger<OrderServiceImpl> _logger = logger;
         private readonly ICacheService _cacheService = cacheService;
         private readonly ISalesRepository _salesRepository = salesRepository;
+        private readonly IMailService _mailService = mailService;
         private readonly IMapper _mapper = mapper;
 
         public async Task<OrderDto> CancelOrder(int id)
@@ -164,13 +166,16 @@ namespace Reneee.Application.Services.Impl
                         orderDetailsEntities.Add(orderDetailsEntity);
                     }
 
+                    var orderDto = _mapper.Map<OrderDto>(savedOrder);
+                    var name = userEntity.FirstName + " " + userEntity.LastName;
 
+                    _mailService.SendOrderConfirmationEmail(userEntity.Email, orderDto, name);
 
                     await _orderDetailsRepository.AddRange(orderDetailsEntities);
                     await _unitOfWork.SaveChangesAsync();
                     await transaction.CommitAsync();
 
-                    return _mapper.Map<OrderDto>(savedOrder);
+                    return orderDto;
                 }
                 catch (Exception ex)
                 {

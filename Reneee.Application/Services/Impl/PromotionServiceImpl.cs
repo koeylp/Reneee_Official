@@ -72,7 +72,7 @@ namespace Reneee.Application.Services.Impl
                             {
                                 ProductAttribute = foundProductAttribute,
                                 Promotion = promotionEntity,
-                                Status = 0
+                                Status = 1
                             };
                             productPromotionEntities.Add(productPromotionEntity);
                         }

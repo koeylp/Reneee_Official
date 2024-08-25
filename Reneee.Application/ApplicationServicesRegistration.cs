@@ -16,7 +16,7 @@ namespace Reneee.Application
             services.AddScoped<IAttributeService, AttributeServiceImpl>();
             services.AddScoped<ICategoryService, CategoryServiceImpl>();
             services.AddScoped<IOrderService, OrderServiceImpl>();
-            services.AddScoped<IPaymentService, PaymentServiceImpl>();  
+            services.AddScoped<IPaymentService, PaymentServiceImpl>();
             services.AddScoped<IProductService, ProductServiceImpl>();
             services.AddScoped<IPromotionService, PromotionServiceImpl>();
             services.AddScoped<ITransactionService, TransactionServiceImpl>();
@@ -24,6 +24,7 @@ namespace Reneee.Application
             services.AddScoped<IAttributeValueService, AttributeValueServiceImpl>();
             services.AddHostedService<PromotionPriceUpdaterService>();
             services.AddScoped<ISalesService, SalesServiceImpl>();
+            services.AddScoped<IProvinceService, ProvinceServiceImpl>();
 
             return services;
         }

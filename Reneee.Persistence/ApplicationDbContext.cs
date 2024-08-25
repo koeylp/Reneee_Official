@@ -24,6 +24,9 @@ namespace Reneee.Persistence
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ResetPassword> ResetPasswords { get; set; }
         public DbSet<Sales> Sales { get; set; }
+        public DbSet<Province> Provinces { get; set; }
+        public DbSet<District> Districts { get; set; } 
+        public DbSet<Ward> Wards { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

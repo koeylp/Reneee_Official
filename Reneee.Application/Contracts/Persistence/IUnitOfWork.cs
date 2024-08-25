@@ -21,6 +21,9 @@ namespace Reneee.Application.Contracts.Persistence
         ICommentRepository CommentRepository { get; }
         IResetPasswordRepository ResetPasswordRepository { get; }
         ISalesRepository SalesRepository { get; }
+        IProvinceRepository ProvinceRepository { get; }
+        IDisctrictRepository DisctrictRepository { get; }
+        IWardRepository WardRepository { get; }
         Task<IDbContextTransaction> BeginTransactionAsync();
         Task SaveChangesAsync();
     }

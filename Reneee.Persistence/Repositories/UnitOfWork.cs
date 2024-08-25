@@ -25,6 +25,9 @@ namespace Reneee.Persistence.Repositories
         private ICommentRepository? _commentRepository;
         private IResetPasswordRepository? _resetPasswordRepository;
         private ISalesRepository? _salesRepository;
+        private IProvinceRepository? _provinceRepository;
+        private IDisctrictRepository? _disctrictRepository;
+        private IWardRepository? _wardRepository;
 
 
         public IAttributeRepository AttributeRepository =>
@@ -59,6 +62,13 @@ namespace Reneee.Persistence.Repositories
             _resetPasswordRepository ??= new ResetPasswordRepository(_context);
         public ISalesRepository SalesRepository =>
             _salesRepository ??= new SalesRepository(_context);
+        public IProvinceRepository ProvinceRepository =>
+            _provinceRepository ??= new ProvinceRepository(_context);
+        public IDisctrictRepository DisctrictRepository =>
+            _disctrictRepository ??= new DistrictRepository(_context);
+        public IWardRepository WardRepository =>
+            _wardRepository ??= new WardRepository(_context);
+
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {

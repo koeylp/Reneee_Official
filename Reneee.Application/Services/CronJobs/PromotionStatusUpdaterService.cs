@@ -6,10 +6,10 @@ using Reneee.Application.Contracts.Persistence;
 
 namespace Reneee.Application.Services.CronJobs
 {
-    public class PromotionStatusUpdaterService(ILogger<PromotionStatusUpdaterService> logger, 
+    public class PromotionStatusUpdaterService(ILogger<PromotionStatusUpdaterService> logger,
                                                IServiceProvider serviceProvider) : BackgroundService
     {
-        private readonly string _cronExpression = "* * * * *"; 
+        private readonly string _cronExpression = "* * * * *";
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {

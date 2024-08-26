@@ -17,6 +17,7 @@ namespace Reneee.Application.DTOs.Product
         public string? Guideline { get; set; }
         public string? AdditionalInfo { get; set; }
         public int Status { get; set; }
+        public int unitSold { get; set; }
         public string? CreatedAt { get; set; }
         public string? UpdatedAt { get; set; }
         public CategoryDto? Category { get; set; }

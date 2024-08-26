@@ -18,6 +18,9 @@ namespace Reneee.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -126,6 +129,24 @@ namespace Reneee.Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Reneee.Domain.Entities.District", b =>
+                {
+                    b.Property<string>("code")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("full_name_en")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("province_code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("code");
+
+                    b.ToTable("Districts");
                 });
 
             modelBuilder.Entity("Reneee.Domain.Entities.Order", b =>
@@ -275,6 +296,9 @@ namespace Reneee.Persistence.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("unitSold")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
@@ -403,6 +427,20 @@ namespace Reneee.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Promotions");
+                });
+
+            modelBuilder.Entity("Reneee.Domain.Entities.Province", b =>
+                {
+                    b.Property<string>("code")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("full_name_en")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("code");
+
+                    b.ToTable("Provinces");
                 });
 
             modelBuilder.Entity("Reneee.Domain.Entities.ResetPassword", b =>
@@ -542,6 +580,24 @@ namespace Reneee.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Reneee.Domain.Entities.Ward", b =>
+                {
+                    b.Property<string>("code")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("district_code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("full_name_en")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("code");
+
+                    b.ToTable("Wards");
                 });
 
             modelBuilder.Entity("Reneee.Domain.Entities.AttributeValue", b =>

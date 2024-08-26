@@ -41,7 +41,7 @@ namespace Reneee.API.Controllers
         }
 
         [HttpPut("status/update")]
-        [Authorize(Roles = RoleConstants.ROLE_STAFF)]
+        [Authorize(Roles = RoleConstants.ROLE_STAFF + "," + RoleConstants.ROLE_CUSTOMER)]
         public async Task<ActionResult<OrderDto>> UpdateOrderStatus([FromQuery] int id, int status)
         {
             return Ok(await _orderService.UpdateOrderStatus(id, status));

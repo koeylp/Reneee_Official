@@ -16,7 +16,6 @@ namespace Reneee.API.Middleware
             try
             {
                 await _next(httpContext);
-                _logger.LogInformation(httpContext.Response.StatusCode.ToString());
                 if (httpContext.Response.StatusCode.ToString() == "401")
                 {
                     httpContext.Response.ContentType = "application/json";

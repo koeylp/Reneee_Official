@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Reneee.Application.Contracts.Persistence;
 using Reneee.Application.DTOs.Category;
 using Reneee.Application.Exceptions;
+using Reneee.Application.Services.CronJobs;
 using Reneee.Domain.Entities;
 
 namespace Reneee.Application.Services.Impl

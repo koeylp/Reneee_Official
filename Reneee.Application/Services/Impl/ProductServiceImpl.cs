@@ -6,7 +6,6 @@ using Reneee.Application.DTOs.Product;
 using Reneee.Application.DTOs.ProductAttribute;
 using Reneee.Application.Exceptions;
 using Reneee.Domain.Entities;
-using System.Collections.Generic;
 
 namespace Reneee.Application.Services.Impl
 {
@@ -56,6 +55,7 @@ namespace Reneee.Application.Services.Impl
                         CreatedAt = DateTime.Now,
                         UpdatedAt = DateTime.Now,
                         Category = categoryEntity,
+                        unitSold = 0,
                         Status = 0
                     };
 
@@ -98,7 +98,7 @@ namespace Reneee.Application.Services.Impl
                             AttributePrice = item.attributePrice,
                             AttributeDiscountPrice = item.attributePrice,
                             Stock = item.stock,
-                            Status = 0
+                            Status = item.stock > 0 ? 1 : 0
                         };
                         await _productAttributeRepository.Add(productAttributeEntity);
                         totalQuantity += item.stock;

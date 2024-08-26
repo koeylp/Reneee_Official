@@ -13,6 +13,7 @@ namespace Reneee.Application.DTOs.Product
         public string? Ingredients { get; set; }
         public string? Guideline { get; set; }
         public string? AdditionalInfo { get; set; }
+        public int unitSold { get; set; }
         public int Status { get; set; }
         public string? CreatedAt { get; set; }
         public CategoryDto? Category { get; set; }

@@ -23,6 +23,7 @@ namespace Reneee.Domain.Entities
         public string? Guideline { get; set; }
         [Column(TypeName = "ntext")]
         public string? AdditionalInfo { get; set; }
+        public int unitSold { get; set; }
         public int Status { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }

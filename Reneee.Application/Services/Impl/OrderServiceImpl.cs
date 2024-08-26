@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Reneee.Application.Contracts.Persistence;
 using Reneee.Application.Contracts.ThirdService;
 using Reneee.Application.DTOs.Order;
 using Reneee.Application.Exceptions;
+using Reneee.Application.Services.CronJobs;
 using Reneee.Domain.Entities;
 using System.Security.Claims;
 
@@ -23,6 +25,7 @@ namespace Reneee.Application.Services.Impl
                                   ICacheService cacheService,
                                   ISalesRepository salesRepository,
                                   IMailService mailService,
+                                  IServiceScopeFactory serviceScopeFactory,
                                   IMapper mapper) : IOrderService
     {
         private readonly IOrderRepository _orderRepository = orderRepository;
@@ -37,6 +40,7 @@ namespace Reneee.Application.Services.Impl
         private readonly ICacheService _cacheService = cacheService;
         private readonly ISalesRepository _salesRepository = salesRepository;
         private readonly IMailService _mailService = mailService;
+        private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
         private readonly IMapper _mapper = mapper;
 
         public async Task<OrderDto> CancelOrder(int id)
@@ -57,13 +61,22 @@ namespace Reneee.Application.Services.Impl
                     var orderDetails = await _orderDetailsRepository.GetOrderDetailsByOrderId(id);
                     foreach (var item in orderDetails)
                     {
-                        var productAttributeEntity = await _productAttributeRepository.Get(item.ProductAttribute.Id);
+                        var productAttributeEntity = await _productAttributeRepository.Get(item.ProductAttribute.Id)
+                        ?? throw new BadRequestException("Product attribute not found with id " + item.ProductAttribute.Id);
                         productAttributeEntity.Stock += item.Quantity;
+                        if (productAttributeEntity.Status == 0)
+                        {
+                            productAttributeEntity.Status = 1;
+                        }
                         await _productAttributeRepository.Update(productAttributeEntity);
                         await _salesRepository.DeleteSalesByProductAttribute(productAttributeEntity);
 
                         var productEntity = await _productRepository.Get(item.ProductAttribute.ProductID);
                         productEntity.TotalQuantity += item.Quantity;
+                        if (productEntity.Status == 0)
+                        {
+                            productEntity.Status = 1;
+                        }
                         await _productRepository.Update(productEntity);
                     }
 
@@ -93,7 +106,6 @@ namespace Reneee.Application.Services.Impl
             {
                 using var transaction = await _unitOfWork.BeginTransactionAsync();
                 var userEntity = await _userService.GetUserFromEmailClaims();
-                //var userEntity = await _userRepository.Get(1);
                 var lockKey = $"lock_order_{Guid.NewGuid()}_{userEntity.Id}";
 
                 var lockAcquired = await _cacheService.AcquireLockAsync(lockKey, TimeSpan.FromMinutes(1));
@@ -139,7 +151,7 @@ namespace Reneee.Application.Services.Impl
                         };
                         await _salesRepository.Add(sales);
 
-                        if (productAttributeEntity.Stock <= 0)
+                        if (productAttributeEntity.Stock <= 0 || productAttributeEntity.Stock < item.Quantity)
                         {
                             throw new BadRequestException($"{productAttributeEntity.Product.Name} got out of stock");
                         }
@@ -147,12 +159,17 @@ namespace Reneee.Application.Services.Impl
                         productAttributeEntity.Stock -= item.Quantity;
                         if (productAttributeEntity.Stock == 0)
                         {
-                            productAttributeEntity.Status = -1;
+                            productAttributeEntity.Status = 0;
                         }
                         await _productAttributeRepository.Update(productAttributeEntity);
 
                         var productEntity = await _productRepository.Get(productAttributeEntity.ProductID);
                         productEntity.TotalQuantity -= item.Quantity;
+                        if (productEntity.TotalQuantity == 0)
+                        {
+                            productEntity.Status = 0;
+                        }
+                        productEntity.unitSold += item.Quantity;
                         await _productRepository.Update(productEntity);
 
                         var orderDetailsEntity = new OrderDetails
@@ -165,15 +182,18 @@ namespace Reneee.Application.Services.Impl
                         };
                         orderDetailsEntities.Add(orderDetailsEntity);
                     }
+                    await _orderDetailsRepository.AddRange(orderDetailsEntities);
 
                     var orderDto = _mapper.Map<OrderDto>(savedOrder);
                     var name = userEntity.FirstName + " " + userEntity.LastName;
 
-                    _mailService.SendOrderConfirmationEmail(userEntity.Email, orderDto, name);
+                    //_mailService.SendOrderConfirmationEmail(userEntity.Email, orderDto, name);
 
-                    await _orderDetailsRepository.AddRange(orderDetailsEntities);
+
                     await _unitOfWork.SaveChangesAsync();
                     await transaction.CommitAsync();
+
+                    _ = Task.Run(async () => await CheckOrderStatusAsync(savedOrder.Id));
 
                     return orderDto;
                 }
@@ -208,8 +228,6 @@ namespace Reneee.Application.Services.Impl
         public async Task<IReadOnlyList<OrderDto>> GetOrdersByUser(int status)
         {
             var userEntity = await _userService.GetUserFromEmailClaims();
-            //var user = await _userRepository.Get(1)
-            //                ?? throw new NotFoundException("User not found");
             var orderEntities = await _orderRepository.GetOrderByUserAndStatus(userEntity, status);
             var orderDtos = _mapper.Map<List<OrderDto>>(orderEntities);
             var sortedOrders = orderDtos.OrderByDescending(order => order.OrderDate).ToList();
@@ -232,5 +250,53 @@ namespace Reneee.Application.Services.Impl
                             ?? throw new NotFoundException($"Order not found with id {id}");
             return orderEntity;
         }
+
+        private async Task CheckOrderStatusAsync(int orderId)
+        {
+            await Task.Delay(TimeSpan.FromMinutes(1));
+
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var orderRepository = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
+                var productRepository = scope.ServiceProvider.GetRequiredService<IProductRepository>();
+                var productAttributeRepository = scope.ServiceProvider.GetRequiredService<IProductAttributeRepository>();
+                var salesRepository = scope.ServiceProvider.GetRequiredService<ISalesRepository>();
+                var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                var order = await orderRepository.Get(orderId);
+
+                if (order != null && order.Status == 0)
+                {
+                    order.Status = -1;
+                    order.UpdatedAt = DateTime.Now;
+
+                    foreach (var item in order.OrderDetails)
+                    {
+                        var productAttributeEntity = await productAttributeRepository.Get(item.ProductAttribute.Id)
+                        ?? throw new BadRequestException("Product attribute not found with id " + item.ProductAttribute.Id);
+                        productAttributeEntity.Stock += item.Quantity;
+                        if (productAttributeEntity.Status == 0)
+                        {
+                            productAttributeEntity.Status = 1;
+                        }
+                        await productAttributeRepository.Update(productAttributeEntity);
+                        await salesRepository.DeleteSalesByProductAttribute(productAttributeEntity);
+
+                        var productEntity = await productRepository.Get(item.ProductAttribute.ProductID);
+                        productEntity.TotalQuantity += item.Quantity;
+                        if (productEntity.Status == 0)
+                        {
+                            productEntity.Status = 1;
+                        }
+                        await productRepository.Update(productEntity);
+                    }
+
+                    await orderRepository.Update(order);
+                    await unitOfWork.SaveChangesAsync();
+                    _logger.LogInformation($"Order {orderId} was canceled due to non-payment after 24 hours.");
+                }
+            }
+        }
+
+
     }
 }

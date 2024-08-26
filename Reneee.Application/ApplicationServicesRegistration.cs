@@ -25,7 +25,11 @@ namespace Reneee.Application
             services.AddHostedService<PromotionPriceUpdaterService>();
             services.AddScoped<ISalesService, SalesServiceImpl>();
             services.AddScoped<IProvinceService, ProvinceServiceImpl>();
-
+            //services.AddOrleansClient(builder =>
+            //{
+            //    builder.UseLocalhostClustering();
+            //    builder.ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(OrderPaymentGrain).Assembly).WithReferences());
+            //});
             return services;
         }
     }

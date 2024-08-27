@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Reneee.Application.Exceptions;
@@ -20,12 +21,14 @@ namespace Reneee.API.Middleware
                 {
                     httpContext.Response.ContentType = "application/json";
                     var response = new { error = "Unauthorized access" };
+                    _logger.LogError("[URL: " + httpContext.Request.GetEncodedUrl() + "] Unauthorized access");
                     await httpContext.Response.WriteAsJsonAsync(response);
                 }
                 else if (httpContext.Response.StatusCode.ToString() == "403")
                 {
                     httpContext.Response.ContentType = "application/json";
                     var response = new { error = "Access Denied" };
+                    _logger.LogError("[URL: " + httpContext.Request.GetEncodedUrl() + "] Access Denied");
                     await httpContext.Response.WriteAsJsonAsync(response);
                 }
             }

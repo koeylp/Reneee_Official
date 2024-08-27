@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -7,9 +6,7 @@ using Reneee.Application.Contracts.Persistence;
 using Reneee.Application.Contracts.ThirdService;
 using Reneee.Application.DTOs.Order;
 using Reneee.Application.Exceptions;
-using Reneee.Application.Services.CronJobs;
 using Reneee.Domain.Entities;
-using System.Security.Claims;
 
 namespace Reneee.Application.Services.Impl
 {
@@ -73,6 +70,7 @@ namespace Reneee.Application.Services.Impl
 
                         var productEntity = await _productRepository.Get(item.ProductAttribute.ProductID);
                         productEntity.TotalQuantity += item.Quantity;
+                        productEntity.unitSold -= item.Quantity;
                         if (productEntity.Status == 0)
                         {
                             productEntity.Status = 1;
@@ -150,11 +148,18 @@ namespace Reneee.Application.Services.Impl
                             UnitsSold = item.Quantity
                         };
                         await _salesRepository.Add(sales);
-
-                        if (productAttributeEntity.Stock <= 0 || productAttributeEntity.Stock < item.Quantity)
+                        if (productAttributeEntity.Stock - item.Quantity < 0)
+                            throw new BadRequestException($"{productAttributeEntity.Product.Name} got out of stock");
+                        if (productAttributeEntity.Stock < item.Quantity)
                         {
                             throw new BadRequestException($"{productAttributeEntity.Product.Name} got out of stock");
                         }
+                        if (productAttributeEntity.Stock <= 0)
+                        {
+                            throw new BadRequestException($"{productAttributeEntity.Product.Name} got out of stock");
+                        }
+
+                        
 
                         productAttributeEntity.Stock -= item.Quantity;
                         if (productAttributeEntity.Stock == 0)
@@ -165,6 +170,8 @@ namespace Reneee.Application.Services.Impl
 
                         var productEntity = await _productRepository.Get(productAttributeEntity.ProductID);
                         productEntity.TotalQuantity -= item.Quantity;
+                        if (productEntity.TotalQuantity - item.Quantity < 0)
+                            throw new BadRequestException($"{productEntity.Name} got out of stock");
                         if (productEntity.TotalQuantity == 0)
                         {
                             productEntity.Status = 0;
@@ -187,13 +194,12 @@ namespace Reneee.Application.Services.Impl
                     var orderDto = _mapper.Map<OrderDto>(savedOrder);
                     var name = userEntity.FirstName + " " + userEntity.LastName;
 
-                    //_mailService.SendOrderConfirmationEmail(userEntity.Email, orderDto, name);
+                    //await _mailService.SendOrderConfirmationEmail(userEntity.Email, orderDto, name);
 
-
+                    _ = Task.Run(async () => await CheckOrderStatusAsync(savedOrder.Id));
                     await _unitOfWork.SaveChangesAsync();
                     await transaction.CommitAsync();
 
-                    _ = Task.Run(async () => await CheckOrderStatusAsync(savedOrder.Id));
 
                     return orderDto;
                 }
@@ -253,7 +259,7 @@ namespace Reneee.Application.Services.Impl
 
         private async Task CheckOrderStatusAsync(int orderId)
         {
-            await Task.Delay(TimeSpan.FromMinutes(1));
+            await Task.Delay(TimeSpan.FromMinutes(3));
 
             using (var scope = _serviceScopeFactory.CreateScope())
             {
@@ -283,6 +289,7 @@ namespace Reneee.Application.Services.Impl
 
                         var productEntity = await productRepository.Get(item.ProductAttribute.ProductID);
                         productEntity.TotalQuantity += item.Quantity;
+                        productEntity.unitSold -= item.Quantity;
                         if (productEntity.Status == 0)
                         {
                             productEntity.Status = 1;
